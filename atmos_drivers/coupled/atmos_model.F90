@@ -579,7 +579,7 @@ subroutine atmos_model_init (Atmos, Time_init, Time, Time_step, iau_offset)
       if (nint(fdiag(2)) == 0) then
          fdiag_fix = .true.
          do i = 2, size(fdiag,1)
-            fdiag(i) = fdiag(i-1) + fdiag(1)
+            fdiag(i) = fdiag(1) * i
          enddo
       endif
       if (mpp_pe() == mpp_root_pe()) write(6,*) "---fdiag",fdiag(1:40)
