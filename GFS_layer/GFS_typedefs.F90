@@ -172,6 +172,7 @@ module GFS_typedefs
     real (kind=kind_phys), pointer :: gt0 (:,:)   => null()  !< updated temperature
     real (kind=kind_phys), pointer :: gq0 (:,:,:) => null()  !< updated tracers
 
+    integer (kind=kind_phys), pointer :: lsm (:) => null()  !< sea/land mask array (sea:0,land:1,sea-ice:2)
     real (kind=kind_phys), pointer :: radh (:,:) => null()  !< radiation heating
     real (kind=kind_phys), pointer :: hflx (:) => null()  !< surface sensible heat flux
     real (kind=kind_phys), pointer :: evap (:) => null()  !< surface evaporation from latent heat flux
@@ -1429,6 +1430,7 @@ module GFS_typedefs
     allocate (Stateout%gt0 (IM,Model%levs))
     allocate (Stateout%gq0 (IM,Model%levs,Model%ntrac))
 
+    allocate (Stateout%lsm (IM))
     allocate (Stateout%radh (IM,Model%levs))
     allocate (Stateout%hflx (IM))
     allocate (Stateout%evap (IM))
@@ -1447,6 +1449,7 @@ module GFS_typedefs
     Stateout%gt0 = clear_val
     Stateout%gq0 = clear_val
 
+    Stateout%lsm = 0
     Stateout%radh = clear_val
     Stateout%hflx = clear_val
     Stateout%evap = clear_val
