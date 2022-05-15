@@ -1567,11 +1567,6 @@ module module_physics_driver
             stateout%zorl(i) = Sfcprop%zorl(i)
             stateout%uustar(i) = Sfcprop%uustar(i)
             stateout%shdmax(i) = Sfcprop%shdmax(i)
-            stateout%u10m(i) = Diag%u10m(i)
-            stateout%v10m(i) = Diag%v10m(i)
-            stateout%rb(i) = rb(i)
-            stateout%stress(i) = stress(i)
-            stateout%wind(i) = wind(i)
          enddo
 
       elseif (Model%do_shoc) then
