@@ -1547,7 +1547,6 @@ module module_physics_driver
 
       if (Model%do_inline_edmf) then
 
-         stateout%sfc_cpl = .true.
          do i=1,im
             Diag%hpbl(i) = Statein%hpbl(i)
             kpbl(i) = Statein%kpbl(i)

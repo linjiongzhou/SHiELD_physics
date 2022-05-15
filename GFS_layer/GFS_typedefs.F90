@@ -172,7 +172,6 @@ module GFS_typedefs
     real (kind=kind_phys), pointer :: gt0 (:,:)   => null()  !< updated temperature
     real (kind=kind_phys), pointer :: gq0 (:,:,:) => null()  !< updated tracers
 
-    logical, pointer :: sfc_cpl => null()  !< whether the surface is coupled
     real (kind=kind_phys), pointer :: radh (:,:) => null()  !< radiation heating
     real (kind=kind_phys), pointer :: hflx (:) => null()  !< surface sensible heat flux
     real (kind=kind_phys), pointer :: evap (:) => null()  !< surface evaporation from latent heat flux
@@ -1442,9 +1441,6 @@ module GFS_typedefs
     allocate (Stateout%zorl (IM))
     allocate (Stateout%uustar (IM))
     allocate (Stateout%shdmax (IM))
-
-    allocate(Stateout%sfc_cpl)
-    Stateout%sfc_cpl = .false.
 
     Stateout%gu0 = clear_val
     Stateout%gv0 = clear_val
