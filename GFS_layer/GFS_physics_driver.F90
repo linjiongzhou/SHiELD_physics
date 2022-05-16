@@ -1235,6 +1235,8 @@ module module_physics_driver
 
         else
 
+          if (.not. Model%do_inline_edmf) then
+
 !  --- ...  surface energy balance over ocean
 
           call sfc_ocean                                                &
@@ -1244,6 +1246,8 @@ module module_physics_driver
             work3, islmsk, Tbd%phy_f2d(1,Model%num_p2d), flag_iter,     &
 !  ---  outputs:
              qss, Diag%cmm, Diag%chh, gflx, evap, hflx, ep1d)
+
+          endif
 
         endif       ! if ( nstf_name(1) > 0 ) then
 
@@ -1335,6 +1339,8 @@ module module_physics_driver
           enddo
         endif
 
+        if (.not. Model%do_inline_edmf) then
+
         call sfc_sice                                                   &
 !  ---  inputs:
            (im, Model%lsoil, Statein%pgr, Statein%ugrs, Statein%vgrs,   &
@@ -1349,6 +1355,8 @@ module module_physics_driver
 !  ---  outputs:
             Sfcprop%snowd, qss, snowmt, gflx, Diag%cmm, Diag%chh, evap, &
             hflx)
+
+        endif
 
         if (Model%cplflx) then
           do i = 1, im
@@ -1554,6 +1562,7 @@ module module_physics_driver
             dqsfc1(i) = Statein%dqsfc(i)
             dusfc1(i) = Statein%dusfc(i)
             dvsfc1(i) = Statein%dvsfc(i)
+            stateout%lsm(i) = islmsk(i)
             Stateout%radh(i,:) = Radtend%htrsw(i,:)*xmu(i)+Radtend%htrlw(i,:)
             stateout%hflx(i) = hflx(i)
             stateout%evap(i) = evap(i)
@@ -1566,6 +1575,17 @@ module module_physics_driver
             stateout%zorl(i) = Sfcprop%zorl(i)
             stateout%uustar(i) = Sfcprop%uustar(i)
             stateout%shdmax(i) = Sfcprop%shdmax(i)
+            stateout%sfcemis(i) = Radtend%semis(i)
+            stateout%dlwflx(i) = gabsbdlw(i)
+            stateout%sfcnsw(i) = adjsfcnsw(i)
+            stateout%sfcdsw(i) = adjsfcdsw(i)
+            stateout%srflag(i) = Sfcprop%srflag(i)
+            stateout%hice(i) = zice(i)
+            stateout%fice(i) = cice(i)
+            stateout%tice(i) = tice(i)
+            stateout%weasd(i) = Sfcprop%weasd(i)
+            stateout%tprcp(i) = Sfcprop%tprcp(i)
+            stateout%stc(i,:) = stsoil(i,:)
          enddo
 
       elseif (Model%do_shoc) then

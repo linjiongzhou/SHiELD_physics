@@ -172,7 +172,7 @@ module GFS_typedefs
     real (kind=kind_phys), pointer :: gt0 (:,:)   => null()  !< updated temperature
     real (kind=kind_phys), pointer :: gq0 (:,:,:) => null()  !< updated tracers
 
-    integer (kind=kind_phys), pointer :: lsm (:) => null()  !< sea/land mask array (sea:0,land:1,sea-ice:2)
+    integer, pointer :: lsm (:) => null()  !< sea/land mask array (sea:0,land:1,sea-ice:2)
     real (kind=kind_phys), pointer :: radh (:,:) => null()  !< radiation heating
     real (kind=kind_phys), pointer :: hflx (:) => null()  !< surface sensible heat flux
     real (kind=kind_phys), pointer :: evap (:) => null()  !< surface evaporation from latent heat flux
@@ -185,6 +185,17 @@ module GFS_typedefs
     real (kind=kind_phys), pointer :: zorl (:) => null()  !< composite surface roughness in cm
     real (kind=kind_phys), pointer :: uustar (:) => null()  !< boundary layer parameter
     real (kind=kind_phys), pointer :: shdmax (:) => null()  !< max fractnl cover of green veg (not used)
+    real (kind=kind_phys), pointer :: sfcemis (:) => null()  !< surface lw emissivity in fraction
+    real (kind=kind_phys), pointer :: dlwflx (:) => null()  !< 
+    real (kind=kind_phys), pointer :: sfcnsw (:) => null()  !< 
+    real (kind=kind_phys), pointer :: sfcdsw (:) => null()  !< 
+    real (kind=kind_phys), pointer :: srflag (:) => null()  !< sfc_fld%srflag - snow/rain flag for precipitation
+    real (kind=kind_phys), pointer :: hice (:) => null()  !< sea ice thickness
+    real (kind=kind_phys), pointer :: fice (:) => null()  !< ice fraction over open water grid
+    real (kind=kind_phys), pointer :: tice (:) => null()  !< surface temperature over ice fraction
+    real (kind=kind_phys), pointer :: weasd (:) => null()  !< water equiv of accumulated snow depth (kg/m**2) over land and sea ice
+    real (kind=kind_phys), pointer :: tprcp (:) => null()  !< sfc_fld%tprcp - total precipitation
+    real (kind=kind_phys), pointer :: stc (:,:) => null()  !< soil temperature
 
     contains
       procedure :: create  => stateout_create  !<   allocate array data
@@ -1443,6 +1454,17 @@ module GFS_typedefs
     allocate (Stateout%zorl (IM))
     allocate (Stateout%uustar (IM))
     allocate (Stateout%shdmax (IM))
+    allocate (Stateout%sfcemis (IM))
+    allocate (Stateout%dlwflx (IM))
+    allocate (Stateout%sfcnsw (IM))
+    allocate (Stateout%sfcdsw (IM))
+    allocate (Stateout%srflag (IM))
+    allocate (Stateout%hice (IM))
+    allocate (Stateout%fice (IM))
+    allocate (Stateout%tice (IM))
+    allocate (Stateout%weasd (IM))
+    allocate (Stateout%tprcp (IM))
+    allocate (Stateout%stc (IM,Model%lsoil))
 
     Stateout%gu0 = clear_val
     Stateout%gv0 = clear_val
@@ -1462,6 +1484,17 @@ module GFS_typedefs
     Stateout%zorl = clear_val
     Stateout%uustar = clear_val
     Stateout%shdmax = clear_val
+    Stateout%sfcemis = clear_val
+    Stateout%dlwflx = clear_val
+    Stateout%sfcnsw = clear_val
+    Stateout%sfcdsw = clear_val
+    Stateout%srflag = clear_val
+    Stateout%hice = clear_val
+    Stateout%fice = clear_val
+    Stateout%tice = clear_val
+    Stateout%weasd = clear_val
+    Stateout%tprcp = clear_val
+    Stateout%stc = clear_val
 
  end subroutine stateout_create
 
