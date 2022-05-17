@@ -142,12 +142,32 @@ module GFS_typedefs
     real (kind=kind_phys), pointer :: prefluxg (:,:)     => null()  !< graupel
 
     !-- variables from inline PBL scheme
-    real (kind=kind_phys), pointer :: hpbl (:)     => null()  !< pbl height (m)
-    integer, pointer               :: kpbl (:)     => null()  !< index of pbl
+    real (kind=kind_phys), pointer :: hpbl (:)      => null()  !< pbl height (m)
+    integer, pointer               :: kpbl (:)      => null()  !< index of pbl
     real (kind=kind_phys), pointer :: dtsfc (:)     => null()  !< sensible heat flux (w/m2)
     real (kind=kind_phys), pointer :: dqsfc (:)     => null()  !< latent heat flux (w/m2)
     real (kind=kind_phys), pointer :: dusfc (:)     => null()  !< u component of surface stress
     real (kind=kind_phys), pointer :: dvsfc (:)     => null()  !< v component of surface stress
+
+    integer, pointer               :: lsm (:)       => null()  !< sea/land mask array (sea:0,land:1,sea-ice:2)
+    real (kind=kind_phys), pointer :: hflx (:)      => null()  !< surface sensible heat flux
+    real (kind=kind_phys), pointer :: evap (:)      => null()  !< surface evaporation from latent heat flux
+    real (kind=kind_phys), pointer :: tsfc (:)      => null()  !< surface temperature in k
+    real (kind=kind_phys), pointer :: vfrac (:)     => null()  !< vegetation fraction
+    real (kind=kind_phys), pointer :: vtype (:)     => null()  !< vegetation type
+    real (kind=kind_phys), pointer :: ffmm (:)      => null()  !< fm parameter from PBL scheme
+    real (kind=kind_phys), pointer :: ffhh (:)      => null()  !< fh parameter from PBL scheme
+    real (kind=kind_phys), pointer :: snowd (:)     => null()  !< snow depth water equivalent in mm ; same as snwdph
+    real (kind=kind_phys), pointer :: zorl (:)      => null()  !< composite surface roughness in cm
+    real (kind=kind_phys), pointer :: uustar (:)    => null()  !< boundary layer parameter
+    real (kind=kind_phys), pointer :: shdmax (:)    => null()  !< max fractnl cover of green veg (not used)
+    real (kind=kind_phys), pointer :: srflag (:)    => null()  !< sfc_fld%srflag - snow/rain flag for precipitation
+    real (kind=kind_phys), pointer :: hice (:)      => null()  !< sea ice thickness
+    real (kind=kind_phys), pointer :: fice (:)      => null()  !< ice fraction over open water grid
+    real (kind=kind_phys), pointer :: tice (:)      => null()  !< surface temperature over ice fraction
+    real (kind=kind_phys), pointer :: weasd (:)     => null()  !< water equiv of accumulated snow depth (kg/m**2) over land and sea ice
+    real (kind=kind_phys), pointer :: tprcp (:)     => null()  !< sfc_fld%tprcp - total precipitation
+    !real (kind=kind_phys), pointer :: stc (:,:)     => null()  !< soil temperature
 
     !--- sea surface temperature
     real (kind=kind_phys), pointer :: sst (:)     => null()   !< sea surface temperature
@@ -1393,6 +1413,25 @@ module GFS_typedefs
     allocate (Statein%dqsfc(IM))
     allocate (Statein%dusfc(IM))
     allocate (Statein%dvsfc(IM))
+    allocate (Statein%lsm(IM))
+    allocate (Statein%hflx(IM))
+    allocate (Statein%evap(IM))
+    allocate (Statein%tsfc(IM))
+    allocate (Statein%vfrac(IM))
+    allocate (Statein%vtype(IM))
+    allocate (Statein%ffmm(IM))
+    allocate (Statein%ffhh(IM))
+    allocate (Statein%snowd(IM))
+    allocate (Statein%zorl(IM))
+    allocate (Statein%uustar(IM))
+    allocate (Statein%shdmax(IM))
+    allocate (Statein%srflag(IM))
+    allocate (Statein%hice(IM))
+    allocate (Statein%fice(IM))
+    allocate (Statein%tice(IM))
+    allocate (Statein%weasd(IM))
+    allocate (Statein%tprcp(IM))
+    !allocate (Statein%stc(IM,Model%lsoil))
 
     Statein%hpbl = clear_val
     Statein%kpbl = 1
@@ -1400,6 +1439,25 @@ module GFS_typedefs
     Statein%dqsfc = clear_val
     Statein%dusfc = clear_val
     Statein%dvsfc = clear_val
+    Statein%lsm = 0
+    Statein%hflx = clear_val
+    Statein%evap = clear_val
+    Statein%tsfc = clear_val
+    Statein%vfrac = clear_val
+    Statein%vtype = clear_val
+    Statein%ffmm = clear_val
+    Statein%ffhh = clear_val
+    Statein%snowd = clear_val
+    Statein%zorl = clear_val
+    Statein%uustar = clear_val
+    Statein%shdmax = clear_val
+    Statein%srflag = clear_val
+    Statein%hice = clear_val
+    Statein%fice = clear_val
+    Statein%tice = clear_val
+    Statein%weasd = clear_val
+    Statein%tprcp = clear_val
+    !Statein%stc = clear_val
 
     allocate (Statein%sst(IM))
     allocate (Statein%ci(IM))

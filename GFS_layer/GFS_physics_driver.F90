@@ -1004,6 +1004,32 @@ module module_physics_driver
       Diag%smcref2(:) = 0.0
       
       
+      if (Model%do_inline_edmf) then
+      
+         do i=1,im
+            islmsk(i) = statein%lsm(i)
+            hflx(i) = statein%hflx(i)
+            evap(i) = statein%evap(i)
+            !Sfcprop%tsfc(i) = statein%tsfc(i)
+            Sfcprop%vfrac(i) = statein%vfrac(i)
+            Sfcprop%vtype(i) = statein%vtype(i)
+            Sfcprop%ffmm(i) = statein%ffmm(i)
+            Sfcprop%ffhh(i) = statein%ffhh(i)
+            Sfcprop%snowd(i) = statein%snowd(i)
+            Sfcprop%zorl(i) = statein%zorl(i)
+            Sfcprop%uustar(i) = statein%uustar(i)
+            Sfcprop%shdmax(i) = statein%shdmax(i)
+            Sfcprop%srflag(i) = statein%srflag(i)
+            zice(i) = statein%hice(i)
+            cice(i) = statein%fice(i)
+            tice(i) = statein%tice(i)
+            Sfcprop%weasd(i) = statein%weasd(i)
+            Sfcprop%tprcp(i) = statein%tprcp(i)
+            stsoil(i,:) = statein%stc(i,:)
+         enddo
+
+      endif
+
 
 !  --- ...  lu: iter-loop over (sfc_diff,sfc_drv,sfc_ocean,sfc_sice)
 
@@ -1236,7 +1262,7 @@ module module_physics_driver
         else
 
           if (.not. Model%do_inline_edmf) then
-
+          
 !  --- ...  surface energy balance over ocean
 
           call sfc_ocean                                                &
