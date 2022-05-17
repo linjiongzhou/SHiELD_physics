@@ -149,7 +149,7 @@ module GFS_typedefs
     real (kind=kind_phys), pointer :: dusfc (:)     => null()  !< u component of surface stress
     real (kind=kind_phys), pointer :: dvsfc (:)     => null()  !< v component of surface stress
 
-    integer, pointer               :: lsm (:)       => null()  !< sea/land mask array (sea:0,land:1,sea-ice:2)
+    integer              , pointer :: lsm (:)       => null()  !< sea/land mask array (sea:0,land:1,sea-ice:2)
     real (kind=kind_phys), pointer :: hflx (:)      => null()  !< surface sensible heat flux
     real (kind=kind_phys), pointer :: evap (:)      => null()  !< surface evaporation from latent heat flux
     real (kind=kind_phys), pointer :: tsfc (:)      => null()  !< surface temperature in k
@@ -169,11 +169,10 @@ module GFS_typedefs
     real (kind=kind_phys), pointer :: tprcp (:)     => null()  !< sfc_fld%tprcp - total precipitation
     !real (kind=kind_phys), pointer :: stc (:,:)     => null()  !< soil temperature
     real (kind=kind_phys), pointer :: qsurf (:)     => null()  !< surface specific humidity
-    real (kind=kind_phys), pointer :: cmm (:)     => null()  !< momentum exchange coefficient
-    real (kind=kind_phys), pointer :: chh (:)     => null()  !< thermal exchange coefficient
+    real (kind=kind_phys), pointer :: cmm (:)       => null()  !< momentum exchange coefficient
+    real (kind=kind_phys), pointer :: chh (:)       => null()  !< thermal exchange coefficient
     real (kind=kind_phys), pointer :: gflux (:)     => null()  !< groud conductive heat flux
-    real (kind=kind_phys), pointer :: ep (:)     => null()  !< potential evaporation
-    real (kind=kind_phys), pointer :: snowmt (:)     => null()  !< snow melt (m)
+    real (kind=kind_phys), pointer :: ep (:)        => null()  !< potential evaporation
 
     !--- sea surface temperature
     real (kind=kind_phys), pointer :: sst (:)     => null()   !< sea surface temperature
@@ -198,36 +197,35 @@ module GFS_typedefs
     real (kind=kind_phys), pointer :: gt0 (:,:)   => null()  !< updated temperature
     real (kind=kind_phys), pointer :: gq0 (:,:,:) => null()  !< updated tracers
 
-    integer, pointer :: lsm (:) => null()  !< sea/land mask array (sea:0,land:1,sea-ice:2)
-    real (kind=kind_phys), pointer :: radh (:,:) => null()  !< radiation heating
-    real (kind=kind_phys), pointer :: hflx (:) => null()  !< surface sensible heat flux
-    real (kind=kind_phys), pointer :: evap (:) => null()  !< surface evaporation from latent heat flux
-    real (kind=kind_phys), pointer :: tsfc (:) => null()  !< surface temperature in k
-    real (kind=kind_phys), pointer :: vfrac (:) => null()  !< vegetation fraction
-    real (kind=kind_phys), pointer :: vtype (:) => null()  !< vegetation type
-    real (kind=kind_phys), pointer :: ffmm (:) => null()  !< fm parameter from PBL scheme
-    real (kind=kind_phys), pointer :: ffhh (:) => null()  !< fh parameter from PBL scheme
-    real (kind=kind_phys), pointer :: snowd (:) => null()  !< snow depth water equivalent in mm ; same as snwdph
-    real (kind=kind_phys), pointer :: zorl (:) => null()  !< composite surface roughness in cm
-    real (kind=kind_phys), pointer :: uustar (:) => null()  !< boundary layer parameter
-    real (kind=kind_phys), pointer :: shdmax (:) => null()  !< max fractnl cover of green veg (not used)
+    integer              , pointer :: lsm (:)     => null()  !< sea/land mask array (sea:0,land:1,sea-ice:2)
+    real (kind=kind_phys), pointer :: radh (:,:)  => null()  !< radiation heating
+    real (kind=kind_phys), pointer :: hflx (:)    => null()  !< surface sensible heat flux
+    real (kind=kind_phys), pointer :: evap (:)    => null()  !< surface evaporation from latent heat flux
+    real (kind=kind_phys), pointer :: tsfc (:)    => null()  !< surface temperature in k
+    real (kind=kind_phys), pointer :: vfrac (:)   => null()  !< vegetation fraction
+    real (kind=kind_phys), pointer :: vtype (:)   => null()  !< vegetation type
+    real (kind=kind_phys), pointer :: ffmm (:)    => null()  !< fm parameter from PBL scheme
+    real (kind=kind_phys), pointer :: ffhh (:)    => null()  !< fh parameter from PBL scheme
+    real (kind=kind_phys), pointer :: snowd (:)   => null()  !< snow depth water equivalent in mm ; same as snwdph
+    real (kind=kind_phys), pointer :: zorl (:)    => null()  !< composite surface roughness in cm
+    real (kind=kind_phys), pointer :: uustar (:)  => null()  !< boundary layer parameter
+    real (kind=kind_phys), pointer :: shdmax (:)  => null()  !< max fractnl cover of green veg (not used)
     real (kind=kind_phys), pointer :: sfcemis (:) => null()  !< surface lw emissivity in fraction
-    real (kind=kind_phys), pointer :: dlwflx (:) => null()  !< 
-    real (kind=kind_phys), pointer :: sfcnsw (:) => null()  !< 
-    real (kind=kind_phys), pointer :: sfcdsw (:) => null()  !< 
-    real (kind=kind_phys), pointer :: srflag (:) => null()  !< sfc_fld%srflag - snow/rain flag for precipitation
-    real (kind=kind_phys), pointer :: hice (:) => null()  !< sea ice thickness
-    real (kind=kind_phys), pointer :: fice (:) => null()  !< ice fraction over open water grid
-    real (kind=kind_phys), pointer :: tice (:) => null()  !< surface temperature over ice fraction
-    real (kind=kind_phys), pointer :: weasd (:) => null()  !< water equiv of accumulated snow depth (kg/m**2) over land and sea ice
-    real (kind=kind_phys), pointer :: tprcp (:) => null()  !< sfc_fld%tprcp - total precipitation
-    real (kind=kind_phys), pointer :: stc (:,:) => null()  !< soil temperature
-    real (kind=kind_phys), pointer :: qsurf (:) => null()  !< surface specific humidity
-    real (kind=kind_phys), pointer :: cmm (:) => null()  !< momentum exchange coefficient
-    real (kind=kind_phys), pointer :: chh (:) => null()  !< thermal exchange coefficient
-    real (kind=kind_phys), pointer :: gflux (:) => null()  !< groud conductive heat flux
-    real (kind=kind_phys), pointer :: ep (:) => null()  !< potential evaporation
-    real (kind=kind_phys), pointer :: snowmt (:) => null()  !< snow melt (m)
+    real (kind=kind_phys), pointer :: dlwflx (:)  => null()  !< 
+    real (kind=kind_phys), pointer :: sfcnsw (:)  => null()  !< 
+    real (kind=kind_phys), pointer :: sfcdsw (:)  => null()  !< 
+    real (kind=kind_phys), pointer :: srflag (:)  => null()  !< sfc_fld%srflag - snow/rain flag for precipitation
+    real (kind=kind_phys), pointer :: hice (:)    => null()  !< sea ice thickness
+    real (kind=kind_phys), pointer :: fice (:)    => null()  !< ice fraction over open water grid
+    real (kind=kind_phys), pointer :: tice (:)    => null()  !< surface temperature over ice fraction
+    real (kind=kind_phys), pointer :: weasd (:)   => null()  !< water equiv of accumulated snow depth (kg/m**2) over land and sea ice
+    real (kind=kind_phys), pointer :: tprcp (:)   => null()  !< sfc_fld%tprcp - total precipitation
+    real (kind=kind_phys), pointer :: stc (:,:)   => null()  !< soil temperature
+    real (kind=kind_phys), pointer :: qsurf (:)   => null()  !< surface specific humidity
+    real (kind=kind_phys), pointer :: cmm (:)     => null()  !< momentum exchange coefficient
+    real (kind=kind_phys), pointer :: chh (:)     => null()  !< thermal exchange coefficient
+    real (kind=kind_phys), pointer :: gflux (:)   => null()  !< groud conductive heat flux
+    real (kind=kind_phys), pointer :: ep (:)      => null()  !< potential evaporation
 
     contains
       procedure :: create  => stateout_create  !<   allocate array data
@@ -620,11 +618,11 @@ module GFS_typedefs
     !--- GFDL microphysical parameters
     logical              :: do_inline_mp    !< flag for GFDL cloud microphysics
 
-    !--- SA-SAS parameters
-    logical              :: do_inline_sas   !< flag for SA-SAS
-
     !--- SA-TKE-EDMF parameters
     logical              :: do_inline_edmf  !< flag for SA-TKE-EDMF
+
+    !--- SA-SAS parameters
+    logical              :: do_inline_sas   !< flag for SA-SAS
 
     !--- GWD parameters
     logical              :: do_inline_gwd   !< flag for GWD
@@ -1449,7 +1447,6 @@ module GFS_typedefs
     allocate (Statein%chh(IM))
     allocate (Statein%gflux(IM))
     allocate (Statein%ep(IM))
-    allocate (Statein%snowmt(IM))
 
     Statein%hpbl = clear_val
     Statein%kpbl = 1
@@ -1481,7 +1478,6 @@ module GFS_typedefs
     Statein%chh = clear_val
     Statein%gflux = clear_val
     Statein%ep = clear_val
-    Statein%snowmt = clear_val
 
     allocate (Statein%sst(IM))
     allocate (Statein%ci(IM))
@@ -1552,7 +1548,6 @@ module GFS_typedefs
     allocate (Stateout%chh (IM))
     allocate (Stateout%gflux (IM))
     allocate (Stateout%ep (IM))
-    allocate (Stateout%snowmt (IM))
 
     Stateout%gu0 = clear_val
     Stateout%gv0 = clear_val
@@ -1588,7 +1583,6 @@ module GFS_typedefs
     Stateout%chh = clear_val
     Stateout%gflux = clear_val
     Stateout%ep = clear_val
-    Stateout%snowmt = clear_val
 
  end subroutine stateout_create
 
@@ -2247,11 +2241,11 @@ module GFS_typedefs
     !--- GFDL microphysical parameters
     logical              :: do_inline_mp = .false.           !< flag for GFDL cloud microphysics
 
-    !--- SA-SAS parameters
-    logical              :: do_inline_sas = .false.          !< flag for SA-SAS
-
     !--- SA-TKE-EDMF parameters
     logical              :: do_inline_edmf = .false.         !< flag for SA-TKE-EDMF
+
+    !--- SA-SAS parameters
+    logical              :: do_inline_sas = .false.          !< flag for SA-SAS
 
     !--- GWD parameters
     logical              :: do_inline_gwd = .false.          !< flag for GWD
@@ -2710,10 +2704,10 @@ module GFS_typedefs
     Model%ncld             = ncld
     !--- GFDL microphysical parameters
     Model%do_inline_mp     = do_inline_mp
-    !--- SA-SAS parameters
-    Model%do_inline_sas    = do_inline_sas
     !--- SA-TKE-EDMF parameters
     Model%do_inline_edmf   = do_inline_edmf
+    !--- SA-SAS parameters
+    Model%do_inline_sas    = do_inline_sas
     !--- GWD parameters
     Model%do_inline_gwd    = do_inline_gwd
     !--- The CFMIP Observation Simulator Package (COSP)
@@ -3076,15 +3070,15 @@ module GFS_typedefs
                                             ' ntke=',Model%ntke
     endif
 
+    !--- turn off PBL when the inline SA-TKE-EDMF is activated
+    if (Model%do_inline_edmf) then
+      Model%no_pbl = .true.
+    endif
+
     !--- turn off convection when the inline SA-SAS is activated
     if (Model%do_inline_sas) then
       Model%do_deep = .false.
       Model%shal_cnv = .false.
-    endif
-
-    !--- turn off PBL when the inline SA-TKE-EDMF is activated
-    if (Model%do_inline_edmf) then
-      Model%no_pbl = .true.
     endif
 
     !--- turn off gravity wave drag when the inline GWD is activated
@@ -3402,10 +3396,10 @@ module GFS_typedefs
       print *, ' ncld              : ', Model%ncld
       print *, ' GFDL microphysical parameters'
       print *, ' do_inline_mp      : ', Model%do_inline_mp
-      print *, ' SA-SAS parameters'
-      print *, ' do_inline_sas     : ', Model%do_inline_sas
       print *, ' SA-EDMF parameters'
       print *, ' do_inline_edmf    : ', Model%do_inline_edmf
+      print *, ' SA-SAS parameters'
+      print *, ' do_inline_sas     : ', Model%do_inline_sas
       print *, ' GWD parameters'
       print *, ' do_inline_gwd     : ', Model%do_inline_gwd
       print *, ' The CFMIP Observation Simulator Package (COSP)'
