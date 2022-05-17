@@ -1007,25 +1007,33 @@ module module_physics_driver
       if (Model%do_inline_edmf) then
       
          do i=1,im
-            islmsk(i) = statein%lsm(i)
-            hflx(i) = statein%hflx(i)
-            evap(i) = statein%evap(i)
-            !Sfcprop%tsfc(i) = statein%tsfc(i)
-            Sfcprop%vfrac(i) = statein%vfrac(i)
-            Sfcprop%vtype(i) = statein%vtype(i)
-            Sfcprop%ffmm(i) = statein%ffmm(i)
-            Sfcprop%ffhh(i) = statein%ffhh(i)
-            Sfcprop%snowd(i) = statein%snowd(i)
-            Sfcprop%zorl(i) = statein%zorl(i)
-            Sfcprop%uustar(i) = statein%uustar(i)
-            Sfcprop%shdmax(i) = statein%shdmax(i)
-            Sfcprop%srflag(i) = statein%srflag(i)
-            zice(i) = statein%hice(i)
-            cice(i) = statein%fice(i)
-            tice(i) = statein%tice(i)
-            Sfcprop%weasd(i) = statein%weasd(i)
-            Sfcprop%tprcp(i) = statein%tprcp(i)
-            stsoil(i,:) = statein%stc(i,:)
+            if ( islmsk(i) .ne. 1 ) then
+               !islmsk(i) = statein%lsm(i)
+               hflx(i) = statein%hflx(i)
+               evap(i) = statein%evap(i)
+               !Sfcprop%tsfc(i) = statein%tsfc(i)
+               Sfcprop%vfrac(i) = statein%vfrac(i)
+               Sfcprop%vtype(i) = statein%vtype(i)
+               Sfcprop%ffmm(i) = statein%ffmm(i)
+               Sfcprop%ffhh(i) = statein%ffhh(i)
+               Sfcprop%snowd(i) = statein%snowd(i)
+               Sfcprop%zorl(i) = statein%zorl(i)
+               Sfcprop%uustar(i) = statein%uustar(i)
+               Sfcprop%shdmax(i) = statein%shdmax(i)
+               Sfcprop%srflag(i) = statein%srflag(i)
+               zice(i) = statein%hice(i)
+               cice(i) = statein%fice(i)
+               tice(i) = statein%tice(i)
+               Sfcprop%weasd(i) = statein%weasd(i)
+               Sfcprop%tprcp(i) = statein%tprcp(i)
+               !stsoil(i,:) = statein%stc(i,:)
+               qss(i) = statein%qsurf(i)
+               Diag%cmm(i) = statein%cmm(i)
+               Diag%chh(i) = statein%chh(i)
+               gflx(i) = statein%gflux(i)
+               ep1d(i) = statein%ep(i)
+               snowmt(i) = statein%snowmt(i)
+            endif
          enddo
 
       endif
@@ -1612,6 +1620,12 @@ module module_physics_driver
             stateout%weasd(i) = Sfcprop%weasd(i)
             stateout%tprcp(i) = Sfcprop%tprcp(i)
             stateout%stc(i,:) = stsoil(i,:)
+            stateout%qsurf(i) = qss(i)
+            stateout%cmm(i) = Diag%cmm(i)
+            stateout%chh(i) = Diag%chh(i)
+            stateout%gflux(i) = gflx(i)
+            stateout%ep(i) = ep1d(i)
+            stateout%snowmt(i) = snowmt(i)
          enddo
 
       elseif (Model%do_shoc) then

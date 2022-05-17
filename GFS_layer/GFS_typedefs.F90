@@ -168,6 +168,12 @@ module GFS_typedefs
     real (kind=kind_phys), pointer :: weasd (:)     => null()  !< water equiv of accumulated snow depth (kg/m**2) over land and sea ice
     real (kind=kind_phys), pointer :: tprcp (:)     => null()  !< sfc_fld%tprcp - total precipitation
     !real (kind=kind_phys), pointer :: stc (:,:)     => null()  !< soil temperature
+    real (kind=kind_phys), pointer :: qsurf (:)     => null()  !< surface specific humidity
+    real (kind=kind_phys), pointer :: cmm (:)     => null()  !< momentum exchange coefficient
+    real (kind=kind_phys), pointer :: chh (:)     => null()  !< thermal exchange coefficient
+    real (kind=kind_phys), pointer :: gflux (:)     => null()  !< groud conductive heat flux
+    real (kind=kind_phys), pointer :: ep (:)     => null()  !< potential evaporation
+    real (kind=kind_phys), pointer :: snowmt (:)     => null()  !< snow melt (m)
 
     !--- sea surface temperature
     real (kind=kind_phys), pointer :: sst (:)     => null()   !< sea surface temperature
@@ -216,6 +222,12 @@ module GFS_typedefs
     real (kind=kind_phys), pointer :: weasd (:) => null()  !< water equiv of accumulated snow depth (kg/m**2) over land and sea ice
     real (kind=kind_phys), pointer :: tprcp (:) => null()  !< sfc_fld%tprcp - total precipitation
     real (kind=kind_phys), pointer :: stc (:,:) => null()  !< soil temperature
+    real (kind=kind_phys), pointer :: qsurf (:) => null()  !< surface specific humidity
+    real (kind=kind_phys), pointer :: cmm (:) => null()  !< momentum exchange coefficient
+    real (kind=kind_phys), pointer :: chh (:) => null()  !< thermal exchange coefficient
+    real (kind=kind_phys), pointer :: gflux (:) => null()  !< groud conductive heat flux
+    real (kind=kind_phys), pointer :: ep (:) => null()  !< potential evaporation
+    real (kind=kind_phys), pointer :: snowmt (:) => null()  !< snow melt (m)
 
     contains
       procedure :: create  => stateout_create  !<   allocate array data
@@ -1432,6 +1444,12 @@ module GFS_typedefs
     allocate (Statein%weasd(IM))
     allocate (Statein%tprcp(IM))
     !allocate (Statein%stc(IM,Model%lsoil))
+    allocate (Statein%qsurf(IM))
+    allocate (Statein%cmm(IM))
+    allocate (Statein%chh(IM))
+    allocate (Statein%gflux(IM))
+    allocate (Statein%ep(IM))
+    allocate (Statein%snowmt(IM))
 
     Statein%hpbl = clear_val
     Statein%kpbl = 1
@@ -1458,6 +1476,12 @@ module GFS_typedefs
     Statein%weasd = clear_val
     Statein%tprcp = clear_val
     !Statein%stc = clear_val
+    Statein%qsurf = clear_val
+    Statein%cmm = clear_val
+    Statein%chh = clear_val
+    Statein%gflux = clear_val
+    Statein%ep = clear_val
+    Statein%snowmt = clear_val
 
     allocate (Statein%sst(IM))
     allocate (Statein%ci(IM))
@@ -1523,6 +1547,12 @@ module GFS_typedefs
     allocate (Stateout%weasd (IM))
     allocate (Stateout%tprcp (IM))
     allocate (Stateout%stc (IM,Model%lsoil))
+    allocate (Stateout%qsurf (IM))
+    allocate (Stateout%cmm (IM))
+    allocate (Stateout%chh (IM))
+    allocate (Stateout%gflux (IM))
+    allocate (Stateout%ep (IM))
+    allocate (Stateout%snowmt (IM))
 
     Stateout%gu0 = clear_val
     Stateout%gv0 = clear_val
@@ -1553,6 +1583,12 @@ module GFS_typedefs
     Stateout%weasd = clear_val
     Stateout%tprcp = clear_val
     Stateout%stc = clear_val
+    Stateout%qsurf = clear_val
+    Stateout%cmm = clear_val
+    Stateout%chh = clear_val
+    Stateout%gflux = clear_val
+    Stateout%ep = clear_val
+    Stateout%snowmt = clear_val
 
  end subroutine stateout_create
 
