@@ -134,6 +134,12 @@ module GFS_typedefs
     real (kind=kind_phys), pointer :: pres (:)     => null()  !< snow
     real (kind=kind_phys), pointer :: preg (:)     => null()  !< graupel
 
+    !--- convection
+    integer              , pointer :: ktop (:)     => null()  !< upper boundary of convection
+    integer              , pointer :: kbot (:)     => null()  !< lower boundary of convection
+    integer              , pointer :: kcnv (:)     => null()  !< whether convection is active (0: no, 1: deep, 2: shallow)
+    real (kind=kind_phys), pointer :: cumabs (:)   => null()  !< maximum convective heating rate
+
     !--- precipitation flux
     real (kind=kind_phys), pointer :: prefluxw (:,:)     => null()  !< water
     real (kind=kind_phys), pointer :: prefluxr (:,:)     => null()  !< rain
@@ -1404,6 +1410,16 @@ module GFS_typedefs
     Statein%prei = clear_val
     Statein%pres = clear_val
     Statein%preg = clear_val
+
+    allocate (Statein%ktop(IM))
+    allocate (Statein%kbot(IM))
+    allocate (Statein%kcnv(IM))
+    allocate (Statein%cumabs(IM))
+
+    Statein%ktop = clear_val
+    Statein%kbot = clear_val
+    Statein%kcnv = clear_val
+    Statein%cumabs = clear_val
 
     allocate (Statein%prefluxw(IM,Model%levs))
     allocate (Statein%prefluxr(IM,Model%levs))

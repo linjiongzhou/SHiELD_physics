@@ -2472,6 +2472,9 @@ module module_physics_driver
           dt_mf = 0.
           cnvw  = 0.
           cnvc  = 0.
+          ktop  = Statein%ktop(:)
+          kbot  = Statein%kbot(:)
+          kcnv  = Statein%kcnv(:)
 
         elseif (Model%do_deep) then
 
@@ -2756,6 +2759,12 @@ module module_physics_driver
 !  --- ...  calculate maximum convective heating rate 
 !           cuhr = temperature change due to deep convection
 
+        if (Model%do_inline_sas) then
+
+        cumabs(:) = Statein%cumabs(:)
+
+        else
+
         cumabs(:) = 0.0
         work3 (:)  = 0.0
         do k = 1, levs
@@ -2769,6 +2778,8 @@ module module_physics_driver
         do i=1,im
           if (work3(i) > 0.0) cumabs(i) = cumabs(i) / (dtp*work3(i))
         enddo
+
+        endif
 
 !       do i = 1, im
 !         do k = kbot(i), ktop(i)
