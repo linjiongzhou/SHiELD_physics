@@ -508,4 +508,3 @@ if (intrm_rst .and. restart_start_secs == 0 .and. &
 !#######################################################################
 
 end program coupler_main
-
