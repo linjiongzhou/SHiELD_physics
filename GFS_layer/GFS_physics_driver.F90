@@ -1614,6 +1614,7 @@ module module_physics_driver
            !Compute dew point, first using vapor pressure
            tem = max(Statein%pgr(i) * Sfcprop%q2m(i) / ( con_eps - con_epsm1 * Sfcprop%q2m(i)), 1.e-8)
            Diag%dpt2m(i) = 243.5 / ( ( 17.67 / log(tem/611.2) ) - 1.) + 273.14
+           Diag%dptmax (:) = max(Diag%dptmax (:),Diag%dpt2m(:))
         enddo
 
 
@@ -3940,6 +3941,7 @@ module module_physics_driver
            !Compute dew point, first using vapor pressure
            tem = max(Statein%pgr(i) * Sfcprop%q2m(i) / ( con_eps - con_epsm1 * Sfcprop%q2m(i)), 1.e-8)
            Diag%dpt2m(i) = 243.5 / ( ( 17.67 / log(tem/611.2) ) - 1.) + 273.14
+           Diag%dptmax (:) = max(Diag%dptmax (:),Diag%dpt2m(:))
           enddo
         endif
       endif

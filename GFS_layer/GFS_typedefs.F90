@@ -1334,6 +1334,7 @@ module GFS_typedefs
     real (kind=kind_phys), pointer :: hflx   (:)    => null()   !< sfc temp flux 
     real (kind=kind_phys), pointer :: evap   (:)    => null()   !< sfc moisture flux
     real (kind=kind_phys), pointer :: dpt2m  (:)    => null()   !< 2 meter dew point temperature
+    real (kind=kind_phys), pointer :: dptmax (:)    => null()   !< max 2 meter dew point temperature
     real (kind=kind_phys), pointer :: zlvl   (:)    => null()   !< layer 1 height (m)
     real (kind=kind_phys), pointer :: psurf  (:)    => null()   !< surface pressure (Pa)
     real (kind=kind_phys), pointer :: hpbl   (:)    => null()   !< pbl height (m)
@@ -4126,6 +4127,7 @@ end subroutine overrides_create
     allocate (Diag%hflx    (IM))
     allocate (Diag%evap    (IM))
     allocate (Diag%dpt2m   (IM))
+    allocate (Diag%dptmax  (IM))
     allocate (Diag%zlvl    (IM))
     allocate (Diag%psurf   (IM))
     allocate (Diag%hpbl    (IM))
@@ -4426,6 +4428,7 @@ end subroutine overrides_create
     Diag%hflx    = zero
     Diag%evap    = zero
     Diag%dpt2m   = zero
+    Diag%dptmax  = zero
     Diag%zlvl    = zero
     Diag%psurf   = zero
     Diag%hpbl    = zero
