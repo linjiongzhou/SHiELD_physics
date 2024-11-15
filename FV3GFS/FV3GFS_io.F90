@@ -4793,6 +4793,18 @@ module FV3GFS_io_mod
     do nb = 1,nblks
       Diag(idx)%data(nb)%var2 => Gfs_diag(nb)%dpt2m(:)
     enddo
+    
+    idx = idx + 1
+    Diag(idx)%axes = 2
+    Diag(idx)%name = 'dpt2mmax'
+    Diag(idx)%desc = 'max 2 meter dew point temperature [K]'
+    Diag(idx)%unit = 'K'
+    Diag(idx)%mod_name = 'gfs_phys'
+    Diag(idx)%intpl_method = 'bilinear'
+    allocate (Diag(idx)%data(nblks))
+    do nb = 1,nblks
+      Diag(idx)%data(nb)%var2 => Gfs_diag(nb)%dptmax(:)
+    enddo
 
     idx = idx + 1
     Diag(idx)%axes = 2
