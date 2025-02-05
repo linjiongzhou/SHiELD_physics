@@ -91,6 +91,7 @@ module GFS_typedefs
     logical :: hydro                             !< whether the dynamical core is hydrostatic
     logical :: do_inline_mp                      !< flag for GFDL cloud microphysics
     logical :: do_cosp                           !< flag for COSP
+    integer :: mp_flag                           !< flag for microphysics scheme
 
   end type GFS_init_type
 
@@ -133,6 +134,8 @@ module GFS_typedefs
     real (kind=kind_phys), pointer :: prei (:)     => null()  !< ice
     real (kind=kind_phys), pointer :: pres (:)     => null()  !< snow
     real (kind=kind_phys), pointer :: preg (:)     => null()  !< graupel
+    real (kind=kind_phys), pointer :: effc (:,:)   => null()  !< liquid cloud effective radius
+    real (kind=kind_phys), pointer :: effi (:,:)   => null()  !< solid cloud effective radius
 
     !--- precipitation flux
     real (kind=kind_phys), pointer :: prefluxw (:,:)     => null()  !< water
@@ -591,6 +594,7 @@ module GFS_typedefs
     !--- GFDL microphysical parameters
     logical              :: do_sat_adj      !< flag for fast saturation adjustment
     logical              :: do_inline_mp    !< flag for GFDL cloud microphysics
+    integer              :: mp_flag         !< flag for microphysics scheme
 
     !--- The CFMIP Observation Simulator Package (COSP)
     logical              :: do_cosp         !< flag for COSP
@@ -1527,32 +1531,49 @@ module GFS_typedefs
        Statein%exch_h = clear_val
     endif
 
+    if (Model%do_inline_mp) then
 
-    allocate (Statein%prew(IM))
-    allocate (Statein%prer(IM))
-    allocate (Statein%prei(IM))
-    allocate (Statein%pres(IM))
-    allocate (Statein%preg(IM))
-
-    Statein%prew = clear_val
-    Statein%prer = clear_val
-    Statein%prei = clear_val
-    Statein%pres = clear_val
-    Statein%preg = clear_val
-
-    if (Model%do_cosp) then
-
-       allocate (Statein%prefluxw(IM,Model%levs))
-       allocate (Statein%prefluxr(IM,Model%levs))
-       allocate (Statein%prefluxi(IM,Model%levs))
-       allocate (Statein%prefluxs(IM,Model%levs))
-       allocate (Statein%prefluxg(IM,Model%levs))
-
-       Statein%prefluxw = clear_val
-       Statein%prefluxr = clear_val
-       Statein%prefluxi = clear_val
-       Statein%prefluxs = clear_val
-       Statein%prefluxg = clear_val
+       if (Model%mp_flag .eq. 2) then
+          allocate (Statein%prew(IM))
+          allocate (Statein%prer(IM))
+          allocate (Statein%prei(IM))
+          allocate (Statein%pres(IM))
+          allocate (Statein%preg(IM))
+       
+          Statein%prew = clear_val
+          Statein%prer = clear_val
+          Statein%prei = clear_val
+          Statein%pres = clear_val
+          Statein%preg = clear_val
+       
+          if (Model%do_cosp) then
+       
+             allocate (Statein%prefluxw(IM,Model%levs))
+             allocate (Statein%prefluxr(IM,Model%levs))
+             allocate (Statein%prefluxi(IM,Model%levs))
+             allocate (Statein%prefluxs(IM,Model%levs))
+             allocate (Statein%prefluxg(IM,Model%levs))
+       
+             Statein%prefluxw = clear_val
+             Statein%prefluxr = clear_val
+             Statein%prefluxi = clear_val
+             Statein%prefluxs = clear_val
+             Statein%prefluxg = clear_val
+       
+          endif
+       endif
+       
+       if (Model%mp_flag .eq. 7) then
+          allocate (Statein%prer(IM))
+          allocate (Statein%pres(IM))
+          allocate (Statein%effc(IM,Model%levs))
+          allocate (Statein%effi(IM,Model%levs))
+       
+          Statein%prer = clear_val
+          Statein%pres = clear_val
+          Statein%effc = clear_val
+          Statein%effi = clear_val
+       endif
 
     endif
 
@@ -2197,7 +2218,7 @@ end subroutine overrides_create
                                  dt_phys, idat, jdat, iau_offset,   &
                                  tracer_names, input_nml_file,      &
                                  tile_num, blksz, hydro,            &
-                                 do_inline_mp, do_cosp)
+                                 do_inline_mp, do_cosp, mp_flag)
 
     !--- modules
     use physcons,         only: max_lon, max_lat, min_lon, min_lat, &
@@ -2237,6 +2258,7 @@ end subroutine overrides_create
     logical,                intent(in) :: hydro
     logical,                intent(in) :: do_inline_mp
     logical,                intent(in) :: do_cosp
+    integer,                intent(in) :: mp_flag
     !--- local variables
     integer :: n, i, j
     integer :: ios
@@ -2824,6 +2846,7 @@ end subroutine overrides_create
     !--- GFDL microphysical parameters
     Model%do_sat_adj       = do_sat_adj
     Model%do_inline_mp     = do_inline_mp
+    Model%mp_flag          = mp_flag
     !--- The CFMIP Observation Simulator Package (COSP)
     Model%do_cosp          = do_cosp
     !--- Zhao-Carr MP parameters
@@ -3553,6 +3576,7 @@ end subroutine overrides_create
       print *, ' GFDL microphysical parameters'
       print *, ' do_sat_adj        : ', Model%do_sat_adj
       print *, ' do_inline_mp      : ', Model%do_inline_mp
+      print *, ' mp_falg           : ', Model%mp_flag
       print *, ' The CFMIP Observation Simulator Package (COSP)'
       print *, ' do_cosp           : ', Model%do_cosp
       print *, ' Z-C microphysical parameters'

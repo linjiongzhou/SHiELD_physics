@@ -3501,236 +3501,173 @@ module module_physics_driver
 
         if (Model%do_sat_adj) then         ! Fast Saturation adjustment
 
-        hs        = Sfcprop%oro(:) * con_g
-        gsize     = sqrt(Grid%area(:))
-        if (Model%ntal .gt. 0) then
-          qnl1    = Stateout%gq0(:,1:levs,Model%ntal)
-        else
-          qnl1    = 0.0
-        endif
-        qni1      = 0.0
-        do k = 1, levs
-          w    (:,k) = -Statein%vvl(:,levs-k+1)*con_rd*Stateout%gt0(:,levs-k+1)     &
-     &                   /Statein%prsl(:,levs-k+1)/con_g
-          delp (:,k) = del(:,levs-k+1)
-          dz   (:,k) = (Statein%phii(:,levs-k+1)-Statein%phii(:,levs-k+2))/con_g
-        enddo
-
-        call cld_sat_adj(dtp, 1, im, 1, levs, .false., .false., adj_vmr(:,levs:1:-1), te(:,levs:1:-1), dte, &
-                         Stateout%gq0(:,levs:1:-1,1), Stateout%gq0(:,levs:1:-1,Model%ntcw), &
-                         Stateout%gq0(:,levs:1:-1,Model%ntrw), Stateout%gq0(:,levs:1:-1,Model%ntiw), &
-                         Stateout%gq0(:,levs:1:-1,Model%ntsw), Stateout%gq0(:,levs:1:-1,Model%ntgl), &
-                         Stateout%gq0(:,levs:1:-1,Model%ntclamt), qnl1(:,levs:1:-1), qni1(:,levs:1:-1), &
-                         hs, dz, Stateout%gt0(:,levs:1:-1), delp, q_con(:,levs:1:-1), cappa(:,levs:1:-1), &
-                         gsize, mppcw, mppew, mppe1, mpper, mppdi, mppd1, mppds, mppdg, mppsi, mpps1, &
-                         mppss, mppsg, mppfw, mppfr, mppmi, mppms, mppmg, mppm1, mppm2, mppm3, mppar, &
-                         mppas, mppag, mpprs, &
-                         mpprg, mppxr, mppxs, mppxg, .true., Model%do_sat_adj, .true., .true.)
+          hs        = Sfcprop%oro(:) * con_g
+          gsize     = sqrt(Grid%area(:))
+          if (Model%ntal .gt. 0) then
+            qnl1    = Stateout%gq0(:,1:levs,Model%ntal)
+          else
+            qnl1    = 0.0
+          endif
+          qni1      = 0.0
+          do k = 1, levs
+            w    (:,k) = -Statein%vvl(:,levs-k+1)*con_rd*Stateout%gt0(:,levs-k+1)     &
+     &                     /Statein%prsl(:,levs-k+1)/con_g
+            delp (:,k) = del(:,levs-k+1)
+            dz   (:,k) = (Statein%phii(:,levs-k+1)-Statein%phii(:,levs-k+2))/con_g
+          enddo
+          
+          call cld_sat_adj(dtp, 1, im, 1, levs, .false., .false., adj_vmr(:,levs:1:-1), te(:,levs:1:-1), dte, &
+                           Stateout%gq0(:,levs:1:-1,1), Stateout%gq0(:,levs:1:-1,Model%ntcw), &
+                           Stateout%gq0(:,levs:1:-1,Model%ntrw), Stateout%gq0(:,levs:1:-1,Model%ntiw), &
+                           Stateout%gq0(:,levs:1:-1,Model%ntsw), Stateout%gq0(:,levs:1:-1,Model%ntgl), &
+                           Stateout%gq0(:,levs:1:-1,Model%ntclamt), qnl1(:,levs:1:-1), qni1(:,levs:1:-1), &
+                           hs, dz, Stateout%gt0(:,levs:1:-1), delp, q_con(:,levs:1:-1), cappa(:,levs:1:-1), &
+                           gsize, mppcw, mppew, mppe1, mpper, mppdi, mppd1, mppds, mppdg, mppsi, mpps1, &
+                           mppss, mppsg, mppfw, mppfr, mppmi, mppms, mppmg, mppm1, mppm2, mppm3, mppar, &
+                           mppas, mppag, mpprs, &
+                           mpprg, mppxr, mppxs, mppxg, .true., Model%do_sat_adj, .true., .true.)
 
         endif
 
         if (Model%do_inline_mp) then       ! GFDL Cloud microphysics
 
-        tem = dtp * con_p001 / con_day
-        Statein%prew(:) = Statein%prew(:) * tem
-        Statein%prer(:) = Statein%prer(:) * tem
-        Statein%prei(:) = Statein%prei(:) * tem
-        Statein%pres(:) = Statein%pres(:) * tem
-        Statein%preg(:) = Statein%preg(:) * tem
-        rain1(:)   = Statein%prew(:)+Statein%prer(:)+Statein%prei(:)+Statein%pres(:)+Statein%preg(:)
-        Diag%ice(:)     = Statein%prei(:)
-        Diag%snow(:)    = Statein%pres(:)
-        Diag%graupel(:) = Statein%preg(:)
-        do i = 1, im
-          ! use rainmin following GFS
-          diag_water = Statein%prew(i)
-          diag_rain = Statein%prer(i)
-          if(Statein%prew(i) < rainmin) diag_water = zero
-          if(Statein%prer(i) < rainmin) diag_rain = zero
-          if(Statein%prei(i) < rainmin) Diag%ice(i) = zero
-          if(Statein%pres(i) < rainmin) Diag%snow(i) = zero
-          if(Statein%preg(i) < rainmin) Diag%graupel(i) = zero
-          diag_rain1 = diag_water + diag_rain + Diag%ice(i) + Diag%snow(i) + Diag%graupel(i)
-          if (diag_rain1 > rainmin) then
-            Diag%sr(i)  = (Diag%ice(i) + Diag%snow(i) + Diag%graupel(i)) &
-                        / diag_rain1
-          else
-            Diag%sr(i) = zero
+          if (Model%mp_flag .eq. 2) then
+
+            tem = dtp * con_p001 / con_day
+            Statein%prew(:) = Statein%prew(:) * tem
+            Statein%prer(:) = Statein%prer(:) * tem
+            Statein%prei(:) = Statein%prei(:) * tem
+            Statein%pres(:) = Statein%pres(:) * tem
+            Statein%preg(:) = Statein%preg(:) * tem
+            rain1(:)   = Statein%prew(:)+Statein%prer(:)+Statein%prei(:)+Statein%pres(:)+Statein%preg(:)
+            Diag%ice(:)     = Statein%prei(:)
+            Diag%snow(:)    = Statein%pres(:)
+            Diag%graupel(:) = Statein%preg(:)
+            do i = 1, im
+              ! use rainmin following GFS
+              diag_water = Statein%prew(i)
+              diag_rain = Statein%prer(i)
+              if(Statein%prew(i) < rainmin) diag_water = zero
+              if(Statein%prer(i) < rainmin) diag_rain = zero
+              if(Statein%prei(i) < rainmin) Diag%ice(i) = zero
+              if(Statein%pres(i) < rainmin) Diag%snow(i) = zero
+              if(Statein%preg(i) < rainmin) Diag%graupel(i) = zero
+              diag_rain1 = diag_water + diag_rain + Diag%ice(i) + Diag%snow(i) + Diag%graupel(i)
+              if (diag_rain1 > rainmin) then
+                Diag%sr(i)  = (Diag%ice(i) + Diag%snow(i) + Diag%graupel(i)) &
+                            / diag_rain1
+              else
+                Diag%sr(i) = zero
+              endif
+            enddo
+
           endif
-        enddo
+          
+          if (Model%mp_flag .eq. 7) then
 
-        else
+            tem = dtp * con_p001 / con_day
+            Statein%prer(:) = Statein%prer(:) * tem
+            Statein%pres(:) = Statein%pres(:) * tem
+            rain1(:)   = Statein%prer(:)+Statein%pres(:)
+            Diag%snow(:)    = Statein%pres(:)
+            do i = 1, im
+              ! use rainmin following GFS
+              diag_rain = Statein%prer(i)
+              if(Statein%prer(i) < rainmin) diag_rain = zero
+              if(Statein%pres(i) < rainmin) Diag%snow(i) = zero
+              diag_rain1 = diag_rain + Diag%snow(i)
+              if (diag_rain1 > rainmin) then
+                Diag%sr(i)  = Diag%snow(i) / diag_rain1
+              else
+                Diag%sr(i) = zero
+              endif
+            enddo
 
-#ifdef fvGFS_2017
-        land     (:,1)   = frland(:)
-        area     (:,1)   = Grid%area(:)
-        water0   (:,1)   = 0.0
-        rain0    (:,1)   = 0.0
-        ice0     (:,1)   = 0.0
-        snow0    (:,1)   = 0.0
-        graupel0 (:,1)   = 0.0
-        qn1      (:,1,:) = 0.0
-        qv_dt    (:,1,:) = 0.0
-        ql_dt    (:,1,:) = 0.0
-        qr_dt    (:,1,:) = 0.0
-        qi_dt    (:,1,:) = 0.0
-        qs_dt    (:,1,:) = 0.0
-        qg_dt    (:,1,:) = 0.0
-        qa_dt    (:,1,:) = 0.0
-        pt_dt    (:,1,:) = 0.0
-        udt      (:,1,:) = 0.0
-        vdt      (:,1,:) = 0.0
-        prefluxw (:,1,:) = 0.0
-        prefluxr (:,1,:) = 0.0
-        prefluxi (:,1,:) = 0.0
-        prefluxs (:,1,:) = 0.0
-        prefluxg (:,1,:) = 0.0
-        do k = 1, levs
-          qv1  (:,1,k) = Stateout%gq0(:,levs-k+1,1         )
-          ql1  (:,1,k) = Stateout%gq0(:,levs-k+1,Model%ntcw)
-          qr1  (:,1,k) = Stateout%gq0(:,levs-k+1,Model%ntrw)
-          qi1  (:,1,k) = Stateout%gq0(:,levs-k+1,Model%ntiw)
-          qs1  (:,1,k) = Stateout%gq0(:,levs-k+1,Model%ntsw)
-          qg1  (:,1,k) = Stateout%gq0(:,levs-k+1,Model%ntgl)
-          qa1  (:,1,k) = Stateout%gq0(:,levs-k+1,Model%ntclamt)
-          pt   (:,1,k) = Stateout%gt0(:,levs-k+1)
-          w    (:,1,k) = -Statein%vvl(:,levs-k+1)*con_rd*Stateout%gt0(:,levs-k+1)     &
-     &                   /Statein%prsl(:,levs-k+1)/con_g
-          uin  (:,1,k) = Stateout%gu0(:,levs-k+1)
-          vin  (:,1,k) = Stateout%gv0(:,levs-k+1)
-          delp (:,1,k) = del(:,levs-k+1)
-          dz   (:,1,k) = (Statein%phii(:,levs-k+1)-Statein%phii(:,levs-k+2))/con_g
-        enddo
-
-        seconds          = mod(nint(Model%fhour*3600),86400)
-
-        call gfdl_cloud_microphys_driver(qv1, ql1, qr1, qi1, qs1, qg1, qa1, &
-                                         qn1, qv_dt, ql_dt, qr_dt, qi_dt,   &
-                                         qs_dt, qg_dt, qa_dt, pt_dt, pt, w, &
-                                         uin, vin, udt, vdt, dz, delp,      &
-                                         area, dtp, land, rain0, snow0,     &
-                                         ice0, graupel0, .false., .true.,   &
-                                         1, im, 1, 1, 1, levs, 1, levs,     &
-                                         seconds)
-
-        tem = dtp * con_p001 / con_day
-        rain1(:)   = (water0(:,1)+rain0(:,1)+ice0(:,1)+snow0(:,1)+graupel0(:,1)) * tem
-        Diag%ice(:)     = ice0    (:,1) * tem
-        Diag%snow(:)    = snow0   (:,1) * tem
-        Diag%graupel(:) = graupel0(:,1) * tem
-        do i = 1, im
-          ! use rainmin threshold following GFS
-          diag_water = water0(i,1) * tem
-          diag_rain = rain0(i,1) * tem
-          if(diag_water < rainmin) diag_water = zero
-          if(diag_rain < rainmin) diag_rain = zero
-          if(Diag%ice(i) < rainmin) Diag%ice(i) = zero
-          if(Diag%snow(i) < rainmin) Diag%snow(i) = zero
-          if(Diag%graupel(i) < rainmin) Diag%graupel(i) = zero
-          diag_rain1 = diag_water + diag_rain + Diag%ice(i) + Diag%snow(i) + Diag%graupel(i)
-          if (diag_rain1 > rainmin) then
-            Diag%sr(i)  =  (Diag%ice(i) + Diag%snow(i) + Diag%graupel(i)) &
-                        / diag_rain1
-          else
-            Diag%sr(i) = zero
           endif
-        enddo
-        do k = 1, levs
-          Stateout%gq0(:,k,1         ) = qv1(:,1,levs-k+1) + qv_dt(:,1,levs-k+1) * dtp
-          Stateout%gq0(:,k,Model%ntcw) = ql1(:,1,levs-k+1) + ql_dt(:,1,levs-k+1) * dtp
-          Stateout%gq0(:,k,Model%ntrw) = qr1(:,1,levs-k+1) + qr_dt(:,1,levs-k+1) * dtp
-          Stateout%gq0(:,k,Model%ntiw) = qi1(:,1,levs-k+1) + qi_dt(:,1,levs-k+1) * dtp
-          Stateout%gq0(:,k,Model%ntsw) = qs1(:,1,levs-k+1) + qs_dt(:,1,levs-k+1) * dtp
-          Stateout%gq0(:,k,Model%ntgl) = qg1(:,1,levs-k+1) + qg_dt(:,1,levs-k+1) * dtp
-          Stateout%gq0(:,k,Model%ntclamt) = qa1(:,1,levs-k+1) + qa_dt(:,1,levs-k+1) * dtp
-          Stateout%gt0(:,k)   = Stateout%gt0(:,k) + pt_dt(:,1,levs-k+1) * dtp
-          Stateout%gu0(:,k)   = Stateout%gu0(:,k) + udt  (:,1,levs-k+1) * dtp
-          Stateout%gv0(:,k)   = Stateout%gv0(:,k) + vdt  (:,1,levs-k+1) * dtp
-        enddo
-
-#else
-        hs        = Sfcprop%oro(:) * con_g
-        gsize     = sqrt(Grid%area(:))
-        water0    = 0.0
-        rain0     = 0.0
-        ice0      = 0.0
-        snow0     = 0.0
-        graupel0  = 0.0
-        if (Model%ntal .gt. 0) then
-          qnl1    = Stateout%gq0(:,1:levs,Model%ntal)
+          
         else
-          qnl1    = 0.0
+          
+          hs        = Sfcprop%oro(:) * con_g
+          gsize     = sqrt(Grid%area(:))
+          water0    = 0.0
+          rain0     = 0.0
+          ice0      = 0.0
+          snow0     = 0.0
+          graupel0  = 0.0
+          if (Model%ntal .gt. 0) then
+            qnl1    = Stateout%gq0(:,1:levs,Model%ntal)
+          else
+            qnl1    = 0.0
+          endif
+          qni1      = 0.0
+          prefluxw  = 0.0
+          prefluxr  = 0.0
+          prefluxi  = 0.0
+          prefluxs  = 0.0
+          prefluxg  = 0.0
+          do k = 1, levs
+            w    (:,k) = -Statein%vvl(:,levs-k+1)*con_rd*Stateout%gt0(:,levs-k+1)     &
+     &                     /Statein%prsl(:,levs-k+1)/con_g
+            delp (:,k) = del(:,levs-k+1)
+            dz   (:,k) = (Statein%phii(:,levs-k+1)-Statein%phii(:,levs-k+2))/con_g
+          enddo
+          
+          call gfdl_cld_mp_driver(Stateout%gq0(:,levs:1:-1,1), Stateout%gq0(:,levs:1:-1,Model%ntcw), &
+                                  Stateout%gq0(:,levs:1:-1,Model%ntrw), Stateout%gq0(:,levs:1:-1,Model%ntiw), &
+                                  Stateout%gq0(:,levs:1:-1,Model%ntsw), Stateout%gq0(:,levs:1:-1,Model%ntgl), &
+                                  Stateout%gq0(:,levs:1:-1,Model%ntclamt), qnl1(:,levs:1:-1), qni1(:,levs:1:-1), &
+                                  Stateout%gt0(:,levs:1:-1), w, Stateout%gu0(:,levs:1:-1), &
+                                  Stateout%gv0(:,levs:1:-1), dz, delp, gsize, dtp, hs, water0, rain0, ice0, snow0, &
+                                  graupel0, Model%dycore_hydrostatic, 1, im, 1, levs, q_con(:,levs:1:-1), cappa(:,levs:1:-1), &
+                                  .false., adj_vmr(:,levs:1:-1), te(:,levs:1:-1), dte, &
+                                  prefluxw(:,levs:1:-1), prefluxr(:,levs:1:-1), &
+                                  prefluxi(:,levs:1:-1), prefluxs(:,levs:1:-1), prefluxg(:,levs:1:-1), &
+                                  mppcw, mppew, mppe1, mpper, mppdi, mppd1, mppds, mppdg, mppsi, mpps1, &
+                                  mppss, mppsg, mppfw, mppfr, mppmi, mppms, mppmg, mppm1, mppm2, mppm3, &
+                                  mppar, mppas, mppag, mpprs, mpprg, mppxr, mppxs, mppxg, .true., Model%do_inline_mp, &
+                                  .true., .true.)
+          
+          tem = dtp * con_p001 / con_day
+          water0(:)   = water0(:)   * tem
+          rain0(:)    = rain0(:)    * tem
+          ice0(:)     = ice0(:)     * tem
+          snow0(:)    = snow0(:)    * tem
+          graupel0(:) = graupel0(:) * tem
+          rain1(:)   = water0(:)+rain0(:)+ice0(:)+snow0(:)+graupel0(:)
+          Diag%ice(:)     = ice0    (:)
+          Diag%snow(:)    = snow0   (:)
+          Diag%graupel(:) = graupel0(:)
+          do i = 1, im
+            ! use rainmin threshold following GFS
+            diag_water = water0(i)
+            diag_rain = rain0(i)
+            if(water0(i) < rainmin) diag_water = zero
+            if(rain0(i) < rainmin) diag_rain = zero
+            if(ice0(i) < rainmin) Diag%ice(i) = zero
+            if(snow0(i) < rainmin) Diag%snow(i) = zero
+            if(graupel0(i) < rainmin) Diag%graupel(i) = zero
+            diag_rain1 = diag_water + diag_rain + Diag%ice(i) + Diag%snow(i) + Diag%graupel(i)
+            if (diag_rain1 > rainmin) then
+              Diag%sr(i)  =  (Diag%ice(i) + Diag%snow(i) + Diag%graupel(i)) &
+                          / diag_rain1
+            else
+              Diag%sr(i) = zero
+            endif
+          enddo
+          
         endif
-        qni1      = 0.0
-        prefluxw  = 0.0
-        prefluxr  = 0.0
-        prefluxi  = 0.0
-        prefluxs  = 0.0
-        prefluxg  = 0.0
-        do k = 1, levs
-          w    (:,k) = -Statein%vvl(:,levs-k+1)*con_rd*Stateout%gt0(:,levs-k+1)     &
-     &                   /Statein%prsl(:,levs-k+1)/con_g
-          delp (:,k) = del(:,levs-k+1)
-          dz   (:,k) = (Statein%phii(:,levs-k+1)-Statein%phii(:,levs-k+2))/con_g
-        enddo
-
-        call gfdl_cld_mp_driver(Stateout%gq0(:,levs:1:-1,1), Stateout%gq0(:,levs:1:-1,Model%ntcw), &
-                                Stateout%gq0(:,levs:1:-1,Model%ntrw), Stateout%gq0(:,levs:1:-1,Model%ntiw), &
-                                Stateout%gq0(:,levs:1:-1,Model%ntsw), Stateout%gq0(:,levs:1:-1,Model%ntgl), &
-                                Stateout%gq0(:,levs:1:-1,Model%ntclamt), qnl1(:,levs:1:-1), qni1(:,levs:1:-1), &
-                                Stateout%gt0(:,levs:1:-1), w, Stateout%gu0(:,levs:1:-1), &
-                                Stateout%gv0(:,levs:1:-1), dz, delp, gsize, dtp, hs, water0, rain0, ice0, snow0, &
-                                graupel0, Model%dycore_hydrostatic, 1, im, 1, levs, q_con(:,levs:1:-1), cappa(:,levs:1:-1), &
-                                .false., adj_vmr(:,levs:1:-1), te(:,levs:1:-1), dte, &
-                                prefluxw(:,levs:1:-1), prefluxr(:,levs:1:-1), &
-                                prefluxi(:,levs:1:-1), prefluxs(:,levs:1:-1), prefluxg(:,levs:1:-1), &
-                                mppcw, mppew, mppe1, mpper, mppdi, mppd1, mppds, mppdg, mppsi, mpps1, &
-                                mppss, mppsg, mppfw, mppfr, mppmi, mppms, mppmg, mppm1, mppm2, mppm3, &
-                                mppar, mppas, mppag, mpprs, mpprg, mppxr, mppxs, mppxg, .true., Model%do_inline_mp, &
-                                .true., .true.)
-
-        tem = dtp * con_p001 / con_day
-        water0(:)   = water0(:)   * tem
-        rain0(:)    = rain0(:)    * tem
-        ice0(:)     = ice0(:)     * tem
-        snow0(:)    = snow0(:)    * tem
-        graupel0(:) = graupel0(:) * tem
-        rain1(:)   = water0(:)+rain0(:)+ice0(:)+snow0(:)+graupel0(:)
-        Diag%ice(:)     = ice0    (:)
-        Diag%snow(:)    = snow0   (:)
-        Diag%graupel(:) = graupel0(:)
-        do i = 1, im
-          ! use rainmin threshold following GFS
-          diag_water = water0(i)
-          diag_rain = rain0(i)
-          if(water0(i) < rainmin) diag_water = zero
-          if(rain0(i) < rainmin) diag_rain = zero
-          if(ice0(i) < rainmin) Diag%ice(i) = zero
-          if(snow0(i) < rainmin) Diag%snow(i) = zero
-          if(graupel0(i) < rainmin) Diag%graupel(i) = zero
-          diag_rain1 = diag_water + diag_rain + Diag%ice(i) + Diag%snow(i) + Diag%graupel(i)
-          if (diag_rain1 > rainmin) then
-            Diag%sr(i)  =  (Diag%ice(i) + Diag%snow(i) + Diag%graupel(i)) &
-                        / diag_rain1
-          else
-            Diag%sr(i) = zero
-          endif
-        enddo
 
         if (Model%do_cosp) then
-            if (Model%do_inline_mp) then       ! GFDL Cloud microphysics
-                Diag%pfr = Statein%prefluxr
-                Diag%pfs = Statein%prefluxs
-                Diag%pfg = Statein%prefluxg
-            else
-                Diag%pfr = prefluxr
-                Diag%pfs = prefluxs
-                Diag%pfg = prefluxg
-            endif
+          if (Model%do_inline_mp) then       ! GFDL Cloud microphysics
+            Diag%pfr = Statein%prefluxr
+            Diag%pfs = Statein%prefluxs
+            Diag%pfg = Statein%prefluxg
+          else
+            Diag%pfr = prefluxr
+            Diag%pfs = prefluxs
+            Diag%pfg = prefluxg
+          endif
         endif
-
-#endif
-      endif
 
       endif       ! end if_ncld
 !     if (lprnt) write(0,*)' rain1 after ls=',rain1(ipr)
@@ -3879,17 +3816,24 @@ module module_physics_driver
               csnow = Diag%rainc(i)
             endif
             if (Model%do_inline_mp) then       ! GFDL Cloud microphysics
-            if ((Statein%prei(i)+Statein%pres(i)+Statein%preg(i)+csnow) .gt. (Statein%prew(i)+Statein%prer(i)+crain)) then
-              Sfcprop%srflag(i) = 1.              ! clu: set srflag to 'snow' (i.e. 1)
-            endif
+              if (Model%mp_flag .eq. 2) then
+                if ((Statein%prei(i)+Statein%pres(i)+Statein%preg(i)+csnow) .gt. (Statein%prew(i)+Statein%prer(i)+crain)) then
+                  Sfcprop%srflag(i) = 1.              ! clu: set srflag to 'snow' (i.e. 1)
+                endif
+              endif
+              if (Model%mp_flag .eq. 7) then
+                if ((Statein%pres(i)+csnow) .gt. (Statein%prer(i)+crain)) then
+                  Sfcprop%srflag(i) = 1.              ! clu: set srflag to 'snow' (i.e. 1)
+                endif
+              endif
             else
 #ifdef fvGFS_2017
-            if ((ice0(i,1)+snow0(i,1)+graupel0(i,1)+csnow) .gt. (water0(i,1)+rain0(i,1)+crain)) then
+              if ((ice0(i,1)+snow0(i,1)+graupel0(i,1)+csnow) .gt. (water0(i,1)+rain0(i,1)+crain)) then
 #else
-            if ((ice0(i)+snow0(i)+graupel0(i)+csnow) .gt. (water0(i)+rain0(i)+crain)) then
+              if ((ice0(i)+snow0(i)+graupel0(i)+csnow) .gt. (water0(i)+rain0(i)+crain)) then
 #endif
-              Sfcprop%srflag(i) = 1.              ! clu: set srflag to 'snow' (i.e. 1)
-            endif
+                Sfcprop%srflag(i) = 1.              ! clu: set srflag to 'snow' (i.e. 1)
+              endif
             endif
           else
             if (t850(i) <= 273.16) then

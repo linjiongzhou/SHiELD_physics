@@ -327,7 +327,7 @@
      &                                     progcld1, progcld2,          &
      &                                     progcld3, progcld4,          &
      &                                     progcld5, progcld6,          &
-     &                                     progclduni, diagcld1
+     &                                     progcld7, progclduni, diagcld1
 
       use module_radsw_parameters,   only: topfsw_type, sfcfsw_type,    &
      &                                     profsw_type,cmpfsw_type,NBDSW
@@ -1610,26 +1610,39 @@
         elseif (icmphys == 5) then           ! zhao/moorthi's prognostic cloud scheme + pdf cloud & cnvc and cnvw
 
           if (.not. Model%cloud_gfdl) then
-          call progcld5 (plyr, plvl, tlyr, tvly, qlyr, qstl, rhly,&    !  ---  inputs
-                         clw, cnvw, cnvc, Grid%xlat, Grid%xlon,   &
-                         Sfcprop%slmsk, tracer1(:,1:lmk,Model%ntclamt),&
-                         im, lmk, lmp, clouds, cldsa, mtopa, mbota)    !  ---  outputs
+              call progcld5 (plyr, plvl, tlyr, tvly, qlyr, qstl, rhly,&    !  ---  inputs
+                             clw, cnvw, cnvc, Grid%xlat, Grid%xlon,   &
+                             Sfcprop%slmsk, tracer1(:,1:lmk,Model%ntclamt),&
+                             im, lmk, lmp, clouds, cldsa, mtopa, mbota)    !  ---  outputs
           else
-          if (Model%ntal .gt. 0) then
-              qa(:,:) = tracer1(:,1:lmk,Model%ntal)
-          else
-              qa(:,:) = tracer1(:,1:lmk,2) * 0.0
-          endif
-          call progcld6 (plyr, plvl, tlyr, tvly, qlyr, qstl, rhly,&    !  ---  inputs
-                         clw, cnvw, cnvc, Grid%xlat, Grid%xlon,   &
-                         tracer1(:,1:lmk,Model%ntcw), &
-                         tracer1(:,1:lmk,Model%ntrw), &
-                         tracer1(:,1:lmk,Model%ntiw), &
-                         tracer1(:,1:lmk,Model%ntsw), &
-                         tracer1(:,1:lmk,Model%ntgl), qa, &
-                         Sfcprop%slmsk, &
-                         tracer1(:,1:lmk,Model%ntclamt),&
-                         im, lmk, lmp, clouds, cldsa, mtopa, mbota)    !  ---  outputs
+              if (Model%ntal .gt. 0) then
+                  qa(:,:) = tracer1(:,1:lmk,Model%ntal)
+              else
+                  qa(:,:) = tracer1(:,1:lmk,2) * 0.0
+              endif
+              if (Model%mp_flag .eq. 2) then
+                  call progcld6 (plyr, plvl, tlyr, tvly, qlyr, qstl, rhly,&    !  ---  inputs
+                                 clw, cnvw, cnvc, Grid%xlat, Grid%xlon,   &
+                                 tracer1(:,1:lmk,Model%ntcw), &
+                                 tracer1(:,1:lmk,Model%ntrw), &
+                                 tracer1(:,1:lmk,Model%ntiw), &
+                                 tracer1(:,1:lmk,Model%ntsw), &
+                                 tracer1(:,1:lmk,Model%ntgl), qa, &
+                                 Sfcprop%slmsk, &
+                                 tracer1(:,1:lmk,Model%ntclamt),&
+                                 im, lmk, lmp, clouds, cldsa, mtopa, mbota)    !  ---  outputs
+              endif
+              if (Model%mp_flag .eq. 7) then
+                  call progcld7 (plyr, plvl, tlyr, tvly, qlyr, qstl, rhly,&    !  ---  inputs
+                                 clw, cnvw, cnvc, Grid%xlat, Grid%xlon,   &
+                                 tracer1(:,1:lmk,Model%ntcw), &
+                                 tracer1(:,1:lmk,Model%ntrw), &
+                                 tracer1(:,1:lmk,Model%ntiw), qa, &
+                                 Sfcprop%slmsk, &
+                                 tracer1(:,1:lmk,Model%ntclamt),&
+                                 Statein%effc(:,1:lmk), Statein%effi(:,1:lmk), &
+                                 im, lmk, lmp, clouds, cldsa, mtopa, mbota)    !  ---  outputs
+              endif
           endif
 
         endif                            ! end if_icmphys
