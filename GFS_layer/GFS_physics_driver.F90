@@ -3991,7 +3991,7 @@ module module_physics_driver
         ! Update t_dt_* and q_dt_* diagnostics such that they represent temperature
         ! and water vapor tendencies contributed by each component of the physics,
         ! consistent with how those tendencies are applied in the dynamical core.
-        nwat = Statein%nwat
+        nwat = Model%nwat
 
         if (Model%dycore_hydrostatic) then
           call moist_cp_nwat6(Statein%qgrs(1:im,1:levs,1:nwat), Stateout%gq0(1:im,1:levs,1:nwat), &
@@ -4101,9 +4101,15 @@ module module_physics_driver
           call physics_to_dycore_mass_fraction(initial_dynamics_q, physics_q, &
               pressure_on_interfaces, im, levs, nwat, new_dynamics_q)
 
-          q_vapor = new_dynamics_q(:,:,ntqv)
-          q_liquid = new_dynamics_q(:,:,ntcw) + new_dynamics_q(:,:,ntrw)
-          q_ice = new_dynamics_q(:,:,ntiw) + new_dynamics_q(:,:,ntsw) + new_dynamics_q(:,:,ntgl)
+          q_vapor = 0.0
+          q_liquid = 0.0
+          q_ice = 0.0
+          if (ntqv .gt. 0) q_vapor = q_vapor + new_dynamics_q(:,:,ntqv)
+          if (ntcw .gt. 0) q_liquid = q_liquid + new_dynamics_q(:,:,ntcw)
+          if (ntrw .gt. 0) q_liquid = q_liquid + new_dynamics_q(:,:,ntrw)
+          if (ntit .gt. 0) q_ice = q_ice + new_dynamics_q(:,:,ntiw)
+          if (ntsw .gt. 0) q_ice = q_ice + new_dynamics_q(:,:,ntsw)
+          if (ntgl .gt. 0) q_ice = q_ice + new_dynamics_q(:,:,ntgl)
           q_dry_air = 1.0 - q_vapor - q_liquid - q_ice
 
           ! By definition now, the weights sum to 1.0.
@@ -4145,9 +4151,15 @@ module module_physics_driver
       call physics_to_dycore_mass_fraction(initial_dynamics_q, physics_q, &
           pressure_on_interfaces, im, levs, nwat, new_dynamics_q)
 
-      q_vapor = new_dynamics_q(:,:,ntqv)
-      q_liquid = new_dynamics_q(:,:,ntcw) + new_dynamics_q(:,:,ntrw)
-      q_ice = new_dynamics_q(:,:,ntiw) + new_dynamics_q(:,:,ntsw) + new_dynamics_q(:,:,ntgl)
+      q_vapor = 0.0
+      q_liquid = 0.0
+      q_ice = 0.0
+      if (ntqv .gt. 0) q_vapor = q_vapor + new_dynamics_q(:,:,ntqv)
+      if (ntcw .gt. 0) q_liquid = q_liquid + new_dynamics_q(:,:,ntcw)
+      if (ntrw .gt. 0) q_liquid = q_liquid + new_dynamics_q(:,:,ntrw)
+      if (ntit .gt. 0) q_ice = q_ice + new_dynamics_q(:,:,ntiw)
+      if (ntsw .gt. 0) q_ice = q_ice + new_dynamics_q(:,:,ntsw)
+      if (ntgl .gt. 0) q_ice = q_ice + new_dynamics_q(:,:,ntgl)
       q_dry_air = 1.0 - q_vapor - q_liquid - q_ice
 
       ! By definition now, the weights sum to 1.0.

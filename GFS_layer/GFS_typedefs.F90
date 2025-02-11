@@ -91,6 +91,7 @@ module GFS_typedefs
     logical :: hydro                             !< whether the dynamical core is hydrostatic
     logical :: do_inline_mp                      !< flag for GFDL cloud microphysics
     logical :: do_cosp                           !< flag for COSP
+    integer :: nwat                              !< flag for mass hydrometeor amount
     integer :: mp_flag                           !< flag for microphysics scheme
 
   end type GFS_init_type
@@ -147,7 +148,6 @@ module GFS_typedefs
     !--- sea surface temperature
     real (kind=kind_phys), pointer :: sst (:)     => null()   !< sea surface temperature
     real (kind=kind_phys), pointer :: ci (:)      => null()   !< sea ice fraction
-    integer, pointer :: nwat                      => null()  !< number of water species used in the model
     contains
       procedure :: create  => statein_create  !<   allocate array data
 
@@ -594,6 +594,7 @@ module GFS_typedefs
     !--- GFDL microphysical parameters
     logical              :: do_sat_adj      !< flag for fast saturation adjustment
     logical              :: do_inline_mp    !< flag for GFDL cloud microphysics
+    integer              :: nwat            !< flag for mass hydrometeor amount
     integer              :: mp_flag         !< flag for microphysics scheme
 
     !--- The CFMIP Observation Simulator Package (COSP)
@@ -1586,9 +1587,6 @@ module GFS_typedefs
     Statein%sst = clear_val
     Statein%ci = -999. ! if below zero it is empty so don't use it
 
-    allocate(Statein%nwat)
-    Statein%nwat = 6
-
 !--- soil state variables - for soil SPPT - sfc-perts, mgehne
     allocate (Statein%smc  (IM,Model%lsoil))
     allocate (Statein%stc  (IM,Model%lsoil))
@@ -2221,7 +2219,7 @@ end subroutine overrides_create
                                  dt_phys, idat, jdat, iau_offset,   &
                                  tracer_names, input_nml_file,      &
                                  tile_num, blksz, hydro,            &
-                                 do_inline_mp, do_cosp, mp_flag)
+                                 do_inline_mp, do_cosp, nwat, mp_flag)
 
     !--- modules
     use physcons,         only: max_lon, max_lat, min_lon, min_lat, &
@@ -2261,6 +2259,7 @@ end subroutine overrides_create
     logical,                intent(in) :: hydro
     logical,                intent(in) :: do_inline_mp
     logical,                intent(in) :: do_cosp
+    integer,                intent(in) :: nwat
     integer,                intent(in) :: mp_flag
     !--- local variables
     integer :: n, i, j
@@ -2849,6 +2848,7 @@ end subroutine overrides_create
     !--- GFDL microphysical parameters
     Model%do_sat_adj       = do_sat_adj
     Model%do_inline_mp     = do_inline_mp
+    Model%nwat             = nwat
     Model%mp_flag          = mp_flag
     !--- The CFMIP Observation Simulator Package (COSP)
     Model%do_cosp          = do_cosp
@@ -3579,6 +3579,7 @@ end subroutine overrides_create
       print *, ' GFDL microphysical parameters'
       print *, ' do_sat_adj        : ', Model%do_sat_adj
       print *, ' do_inline_mp      : ', Model%do_inline_mp
+      print *, ' nwat              : ', Model%nwat
       print *, ' mp_falg           : ', Model%mp_flag
       print *, ' The CFMIP Observation Simulator Package (COSP)'
       print *, ' do_cosp           : ', Model%do_cosp
