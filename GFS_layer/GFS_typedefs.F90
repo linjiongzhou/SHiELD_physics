@@ -91,6 +91,7 @@ module GFS_typedefs
     logical :: hydro                             !< whether the dynamical core is hydrostatic
     logical :: do_inline_mp                      !< flag for GFDL cloud microphysics
     logical :: do_cosp                           !< flag for COSP
+    integer :: nq                                !< number of tracers that advected
     integer :: nwat                              !< flag for mass hydrometeor amount
     integer :: mp_flag                           !< flag for microphysics scheme
 
@@ -594,6 +595,7 @@ module GFS_typedefs
     !--- GFDL microphysical parameters
     logical              :: do_sat_adj      !< flag for fast saturation adjustment
     logical              :: do_inline_mp    !< flag for GFDL cloud microphysics
+    integer              :: nq              !< number of tracers that advected
     integer              :: nwat            !< flag for mass hydrometeor amount
     integer              :: mp_flag         !< flag for microphysics scheme
 
@@ -2219,7 +2221,7 @@ end subroutine overrides_create
                                  dt_phys, idat, jdat, iau_offset,   &
                                  tracer_names, input_nml_file,      &
                                  tile_num, blksz, hydro,            &
-                                 do_inline_mp, do_cosp, nwat, mp_flag)
+                                 do_inline_mp, do_cosp, nq, nwat, mp_flag)
 
     !--- modules
     use physcons,         only: max_lon, max_lat, min_lon, min_lat, &
@@ -2259,6 +2261,7 @@ end subroutine overrides_create
     logical,                intent(in) :: hydro
     logical,                intent(in) :: do_inline_mp
     logical,                intent(in) :: do_cosp
+    integer,                intent(in) :: nq
     integer,                intent(in) :: nwat
     integer,                intent(in) :: mp_flag
     !--- local variables
@@ -2848,6 +2851,7 @@ end subroutine overrides_create
     !--- GFDL microphysical parameters
     Model%do_sat_adj       = do_sat_adj
     Model%do_inline_mp     = do_inline_mp
+    Model%nq               = nq
     Model%nwat             = nwat
     Model%mp_flag          = mp_flag
     !--- The CFMIP Observation Simulator Package (COSP)
@@ -3579,6 +3583,7 @@ end subroutine overrides_create
       print *, ' GFDL microphysical parameters'
       print *, ' do_sat_adj        : ', Model%do_sat_adj
       print *, ' do_inline_mp      : ', Model%do_inline_mp
+      print *, ' nq                : ', Model%nq
       print *, ' nwat              : ', Model%nwat
       print *, ' mp_falg           : ', Model%mp_flag
       print *, ' The CFMIP Observation Simulator Package (COSP)'

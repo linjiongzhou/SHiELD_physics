@@ -2203,7 +2203,9 @@ module module_physics_driver
         ! cloud ice
         Stateout%gq0(:,:,Model%ntiw) = Statein%qgrs(:,:,Model%ntiw) + dqdt(:,:,Model%ntiw) * dtp
       else
-         Stateout%gq0(:,:,:) = Statein%qgrs(:,:,:) + dqdt(:,:,:) * dtp
+         Stateout%gq0(:,:,1:Model%nq) = Statein%qgrs(:,:,1:Model%nq) + dqdt(:,:,1:Model%nq) * dtp
+         if (Model%ntrac .gt. Model%nq) &
+            Stateout%gq0(:,:,Model%nq+1:Model%ntrac) = Statein%qgrs(:,:,Model%nq+1:Model%ntrac)
       endif
 ! Linjiong, 09/18/2017, turn off vertical mixing of rain, snow, and graupel
 
@@ -4107,7 +4109,7 @@ module module_physics_driver
           if (ntqv .gt. 0) q_vapor = q_vapor + new_dynamics_q(:,:,ntqv)
           if (ntcw .gt. 0) q_liquid = q_liquid + new_dynamics_q(:,:,ntcw)
           if (ntrw .gt. 0) q_liquid = q_liquid + new_dynamics_q(:,:,ntrw)
-          if (ntit .gt. 0) q_ice = q_ice + new_dynamics_q(:,:,ntiw)
+          if (ntiw .gt. 0) q_ice = q_ice + new_dynamics_q(:,:,ntiw)
           if (ntsw .gt. 0) q_ice = q_ice + new_dynamics_q(:,:,ntsw)
           if (ntgl .gt. 0) q_ice = q_ice + new_dynamics_q(:,:,ntgl)
           q_dry_air = 1.0 - q_vapor - q_liquid - q_ice
@@ -4157,7 +4159,7 @@ module module_physics_driver
       if (ntqv .gt. 0) q_vapor = q_vapor + new_dynamics_q(:,:,ntqv)
       if (ntcw .gt. 0) q_liquid = q_liquid + new_dynamics_q(:,:,ntcw)
       if (ntrw .gt. 0) q_liquid = q_liquid + new_dynamics_q(:,:,ntrw)
-      if (ntit .gt. 0) q_ice = q_ice + new_dynamics_q(:,:,ntiw)
+      if (ntiw .gt. 0) q_ice = q_ice + new_dynamics_q(:,:,ntiw)
       if (ntsw .gt. 0) q_ice = q_ice + new_dynamics_q(:,:,ntsw)
       if (ntgl .gt. 0) q_ice = q_ice + new_dynamics_q(:,:,ntgl)
       q_dry_air = 1.0 - q_vapor - q_liquid - q_ice
