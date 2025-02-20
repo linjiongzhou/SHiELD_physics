@@ -2794,9 +2794,11 @@
       do k = 1, NLAY
         do i = 1, IX
           clouds(i,k,1) = cldtot(i,k)
-          clouds(i,k,2) = (qw(i,k)+qr(i,k))*abs(plvl(i,k)-plvl(i,k+1))*100/con_g*1.e3
+          clouds(i,k,2) = (qw(i,k)+qr(i,k))*abs(plvl(i,k)-plvl(i,k+1))* &
+     &                    100/con_g*1.e3
           clouds(i,k,3) = effc(i,k)*1.e6
-          clouds(i,k,4) = qi(i,k)*abs(plvl(i,k)-plvl(i,k+1))*100/con_g*1.e3
+          clouds(i,k,4) = qi(i,k)*abs(plvl(i,k)-plvl(i,k+1))*           &
+     &                    100/con_g*1.e3
           clouds(i,k,5) = effi(i,k)*1.e6
           clouds(i,k,6) = 0
           clouds(i,k,7) = rrain_def
