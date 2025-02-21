@@ -1216,7 +1216,7 @@
       real(kind=kind_phys), dimension(size(Grid%xlon,1),Model%levr+LTP) :: &
            htswc, htlwc, gcice, grain, grime, htsw0, htlw0, plyr, tlyr,    &
            qlyr, olyr, rhly, tvly,qstl, vvel, clw, ciw, prslk1, tem2da,    &
-           tem2db, cldcov, deltaq, cnvc, cnvw, qa, tau067, tau110
+           tem2db, cldcov, deltaq, cnvc, cnvw, qa, q1, q2, e1, e2, tau067, tau110
 
       real(kind=kind_phys), dimension(size(Grid%xlon,1),Model%levr+1+LTP) :: plvl, tlvl
 
@@ -1620,6 +1620,20 @@
               else
                   qa(:,:) = tracer1(:,1:lmk,2) * 0.0
               endif
+              if (Model%ncat .gt. 1) then
+                  q1(:,:) = tracer1(:,1:lmk,Model%ntsw)
+                  e1(:,:) = Statein%effs(:,1:lmk)
+              else
+                  q1(:,:) = tracer1(:,1:lmk,2) * 0.0
+                  e1(:,:) = Statein%effi(:,1:lmk) * 0.0
+              endif
+              if (Model%ncat .gt. 2) then
+                  q2(:,:) = tracer1(:,1:lmk,Model%ntgl)
+                  e2(:,:) = Statein%effg(:,1:lmk)
+              else
+                  q2(:,:) = tracer1(:,1:lmk,2) * 0.0
+                  e2(:,:) = Statein%effi(:,1:lmk) * 0.0
+              endif
               if (Model%mp_flag .eq. 2) then
                   call progcld6 (plyr, plvl, tlyr, tvly, qlyr, qstl, rhly,&    !  ---  inputs
                                  clw, cnvw, cnvc, Grid%xlat, Grid%xlon,   &
@@ -1637,10 +1651,10 @@
                                  clw, cnvw, cnvc, Grid%xlat, Grid%xlon,   &
                                  tracer1(:,1:lmk,Model%ntcw), &
                                  tracer1(:,1:lmk,Model%ntrw), &
-                                 tracer1(:,1:lmk,Model%ntiw), qa, &
-                                 Sfcprop%slmsk, &
+                                 tracer1(:,1:lmk,Model%ntiw), q1, q2, qa, &
+                                 Model%ncat, Sfcprop%slmsk, &
                                  tracer1(:,1:lmk,Model%ntclamt),&
-                                 Statein%effc(:,1:lmk), Statein%effi(:,1:lmk), &
+                                 Statein%effc(:,1:lmk), Statein%effi(:,1:lmk), e1, e2, &
                                  im, lmk, lmp, clouds, cldsa, mtopa, mbota)    !  ---  outputs
               endif
           endif

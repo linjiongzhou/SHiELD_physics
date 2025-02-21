@@ -2653,8 +2653,8 @@
 
 !  ---  inputs:
      &     ( plyr,plvl,tlyr,tvly,qlyr,qstl,rhly,clw,cnvw,cnvc,          &
-     &       xlat,xlon,qw,qr,qi,qa,slmsk,cldtot,effc,effi,              &
-     &       IX, NLAY, NLP1,                                            &
+     &       xlat,xlon,qw,qr,qi,qs,qg,qa,ncat,slmsk,cldtot,effc,effi,   &
+     &       effs, effg, IX, NLAY, NLP1,                                &
 !  ---  outputs:
      &       clouds,clds,mtop,mbot                                      &
      &      )
@@ -2733,13 +2733,14 @@
       implicit none
 
 !  ---  inputs
-      integer,  intent(in) :: IX, NLAY, NLP1
+      integer,  intent(in) :: IX, NLAY, NLP1, ncat
 
       real (kind=kind_phys), dimension(:,:), intent(in) :: plvl, plyr,  &
-     &       tlyr, tvly, qlyr, qstl, rhly, clw, cnvw, cnvc, effc, effi
+     &       tlyr, tvly, qlyr, qstl, rhly, clw, cnvw, cnvc, effc, effi, &
+     &       effs, effg
 
       real (kind=kind_phys), dimension(:,:), intent(inout) ::           &
-     &       qw, qr, qi, qa
+     &       qw, qr, qi, qs, qg, qa
       real (kind=kind_phys), dimension(:,:), intent(inout) :: cldtot
 
       real (kind=kind_phys), dimension(:),   intent(in) :: xlat, xlon,  &
@@ -2802,10 +2803,22 @@
           clouds(i,k,5) = effi(i,k)*1.e6
           clouds(i,k,6) = 0
           clouds(i,k,7) = rrain_def
-          clouds(i,k,8) = 0
-          clouds(i,k,9) = rsnow_def
-          clouds(i,k,10) = 0
-          clouds(i,k,11) = rsnow_def
+          if (ncat .gt. 1) then
+             clouds(i,k,8) = qs(i,k)*abs(plvl(i,k)-plvl(i,k+1))*        &
+     &                       100/con_g*1.e3
+             clouds(i,k,9) = effs(i,k)*1.e6
+          else
+            clouds(i,k,8) = 0
+            clouds(i,k,9) = rsnow_def
+          endif
+          if (ncat .gt. 2) then
+             clouds(i,k,10) = qg(i,k)*abs(plvl(i,k)-plvl(i,k+1))*       &
+     &                        100/con_g*1.e3
+             clouds(i,k,11) = effg(i,k)*1.e6
+          else
+            clouds(i,k,10) = 0
+            clouds(i,k,11) = rsnow_def
+          endif
         enddo
       enddo
 

@@ -93,6 +93,7 @@ module GFS_typedefs
     logical :: do_cosp                           !< flag for COSP
     integer :: nq                                !< number of tracers that advected
     integer :: nwat                              !< flag for mass hydrometeor amount
+    integer :: ncat                              !< ice category
     integer :: mp_flag                           !< flag for microphysics scheme
 
   end type GFS_init_type
@@ -138,6 +139,8 @@ module GFS_typedefs
     real (kind=kind_phys), pointer :: preg (:)     => null()  !< graupel
     real (kind=kind_phys), pointer :: effc (:,:)   => null()  !< liquid cloud effective radius
     real (kind=kind_phys), pointer :: effi (:,:)   => null()  !< solid cloud effective radius
+    real (kind=kind_phys), pointer :: effs (:,:)   => null()  !< solid cloud effective radius
+    real (kind=kind_phys), pointer :: effg (:,:)   => null()  !< solid cloud effective radius
 
     !--- precipitation flux
     real (kind=kind_phys), pointer :: prefluxw (:,:)     => null()  !< water
@@ -597,6 +600,7 @@ module GFS_typedefs
     logical              :: do_inline_mp    !< flag for GFDL cloud microphysics
     integer              :: nq              !< number of tracers that advected
     integer              :: nwat            !< flag for mass hydrometeor amount
+    integer              :: ncat            !< ice category
     integer              :: mp_flag         !< flag for microphysics scheme
 
     !--- The CFMIP Observation Simulator Package (COSP)
@@ -1574,6 +1578,15 @@ module GFS_typedefs
           allocate (Statein%pres(IM))
           allocate (Statein%effc(IM,Model%levs))
           allocate (Statein%effi(IM,Model%levs))
+
+          if (Model%ncat .gt. 1) then
+             allocate (Statein%effs(IM,Model%levs))
+             Statein%effs = clear_val
+          endif
+          if (Model%ncat .gt. 2) then
+             allocate (Statein%effg(IM,Model%levs))
+             Statein%effg = clear_val
+          endif
        
           Statein%prer = clear_val
           Statein%pres = clear_val
@@ -2221,7 +2234,8 @@ end subroutine overrides_create
                                  dt_phys, idat, jdat, iau_offset,   &
                                  tracer_names, input_nml_file,      &
                                  tile_num, blksz, hydro,            &
-                                 do_inline_mp, do_cosp, nq, nwat, mp_flag)
+                                 do_inline_mp, do_cosp, nq, nwat,   &
+                                 ncat, mp_flag)
 
     !--- modules
     use physcons,         only: max_lon, max_lat, min_lon, min_lat, &
@@ -2263,6 +2277,7 @@ end subroutine overrides_create
     logical,                intent(in) :: do_cosp
     integer,                intent(in) :: nq
     integer,                intent(in) :: nwat
+    integer,                intent(in) :: ncat
     integer,                intent(in) :: mp_flag
     !--- local variables
     integer :: n, i, j
@@ -2853,6 +2868,7 @@ end subroutine overrides_create
     Model%do_inline_mp     = do_inline_mp
     Model%nq               = nq
     Model%nwat             = nwat
+    Model%ncat             = ncat
     Model%mp_flag          = mp_flag
     !--- The CFMIP Observation Simulator Package (COSP)
     Model%do_cosp          = do_cosp
@@ -3585,6 +3601,7 @@ end subroutine overrides_create
       print *, ' do_inline_mp      : ', Model%do_inline_mp
       print *, ' nq                : ', Model%nq
       print *, ' nwat              : ', Model%nwat
+      print *, ' ncat              : ', Model%ncat
       print *, ' mp_falg           : ', Model%mp_flag
       print *, ' The CFMIP Observation Simulator Package (COSP)'
       print *, ' do_cosp           : ', Model%do_cosp
