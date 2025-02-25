@@ -1620,20 +1620,6 @@
               else
                   qa(:,:) = tracer1(:,1:lmk,2) * 0.0
               endif
-              if (Model%ncat .gt. 1) then
-                  q1(:,:) = tracer1(:,1:lmk,Model%ntsw)
-                  e1(:,:) = Statein%effs(:,1:lmk)
-              else
-                  q1(:,:) = tracer1(:,1:lmk,2) * 0.0
-                  e1(:,:) = Statein%effi(:,1:lmk) * 0.0
-              endif
-              if (Model%ncat .gt. 2) then
-                  q2(:,:) = tracer1(:,1:lmk,Model%ntgl)
-                  e2(:,:) = Statein%effg(:,1:lmk)
-              else
-                  q2(:,:) = tracer1(:,1:lmk,2) * 0.0
-                  e2(:,:) = Statein%effi(:,1:lmk) * 0.0
-              endif
               if (Model%mp_flag .eq. 2) then
                   call progcld6 (plyr, plvl, tlyr, tvly, qlyr, qstl, rhly,&    !  ---  inputs
                                  clw, cnvw, cnvc, Grid%xlat, Grid%xlon,   &
@@ -1647,6 +1633,20 @@
                                  im, lmk, lmp, clouds, cldsa, mtopa, mbota)    !  ---  outputs
               endif
               if (Model%mp_flag .eq. 7) then
+                  if (Model%ncat .gt. 1) then
+                      q1(:,:) = tracer1(:,1:lmk,Model%ntsw)
+                      e1(:,:) = Statein%effs(:,1:lmk)
+                  else
+                      q1(:,:) = tracer1(:,1:lmk,2) * 0.0
+                      e1(:,:) = Statein%effi(:,1:lmk) * 0.0
+                  endif
+                  if (Model%ncat .gt. 2) then
+                      q2(:,:) = tracer1(:,1:lmk,Model%ntgl)
+                      e2(:,:) = Statein%effg(:,1:lmk)
+                  else
+                      q2(:,:) = tracer1(:,1:lmk,2) * 0.0
+                      e2(:,:) = Statein%effi(:,1:lmk) * 0.0
+                  endif
                   call progcld7 (plyr, plvl, tlyr, tvly, qlyr, qstl, rhly,&    !  ---  inputs
                                  clw, cnvw, cnvc, Grid%xlat, Grid%xlon,   &
                                  tracer1(:,1:lmk,Model%ntcw), &
