@@ -2777,6 +2777,8 @@
       enddo
 !     clouds(:,:,:) = 0.0
 
+      cldcnv = cnvc
+
 !  ---  find top pressure for each cloud domain for given latitude
 !       ptopc(k,i): top presure of each cld domain (k=1-4 are sfc,L,m,h;
 !  ---  i=1,2 are low-lat (<45 degree) and pole regions)
