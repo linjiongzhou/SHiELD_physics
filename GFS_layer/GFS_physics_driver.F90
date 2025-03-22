@@ -529,7 +529,7 @@ module module_physics_driver
       real(kind=kind_phys), dimension(size(Grid%xlon,1),Model%levs) ::  &
            delp, dz, uin, vin, pt, qv1, ql1, qr1, qg1, qa1, qnl1, qi1,  &
            qs1, pt_dt, udt, vdt, w, qv_dt, ql_dt, qr_dt, qi_dt, qni1,   &
-           qs_dt, qg_dt, adj_vmr, te, q_con, cappa, &
+           qs_dt, qg_dt, adj_vmr, te, q_con, cappa, zet, &
            phmid, th, tke, exner, exchh1, el1 ! for myj
 #endif
 
@@ -3522,7 +3522,7 @@ module module_physics_driver
                            Stateout%gq0(:,levs:1:-1,1), Stateout%gq0(:,levs:1:-1,Model%ntcw), &
                            Stateout%gq0(:,levs:1:-1,Model%ntrw), Stateout%gq0(:,levs:1:-1,Model%ntiw), &
                            Stateout%gq0(:,levs:1:-1,Model%ntsw), Stateout%gq0(:,levs:1:-1,Model%ntgl), &
-                           Stateout%gq0(:,levs:1:-1,Model%ntclamt), qnl1(:,levs:1:-1), qni1(:,levs:1:-1), &
+                           Stateout%gq0(:,levs:1:-1,Model%ntclamt), zet(:,levs:1:-1), qnl1(:,levs:1:-1), qni1(:,levs:1:-1), &
                            hs, dz, Stateout%gt0(:,levs:1:-1), delp, q_con(:,levs:1:-1), cappa(:,levs:1:-1), &
                            gsize, mppcw, mppew, mppe1, mpper, mppdi, mppd1, mppds, mppdg, mppsi, mpps1, &
                            mppss, mppsg, mppfw, mppfr, mppmi, mppms, mppmg, mppm1, mppm2, mppm3, mppar, &
@@ -3617,7 +3617,7 @@ module module_physics_driver
           call gfdl_cld_mp_driver(Stateout%gq0(:,levs:1:-1,1), Stateout%gq0(:,levs:1:-1,Model%ntcw), &
                                   Stateout%gq0(:,levs:1:-1,Model%ntrw), Stateout%gq0(:,levs:1:-1,Model%ntiw), &
                                   Stateout%gq0(:,levs:1:-1,Model%ntsw), Stateout%gq0(:,levs:1:-1,Model%ntgl), &
-                                  Stateout%gq0(:,levs:1:-1,Model%ntclamt), qnl1(:,levs:1:-1), qni1(:,levs:1:-1), &
+                                  Stateout%gq0(:,levs:1:-1,Model%ntclamt), zet(:,levs:1:-1), qnl1(:,levs:1:-1), qni1(:,levs:1:-1), &
                                   Stateout%gt0(:,levs:1:-1), w, Stateout%gu0(:,levs:1:-1), &
                                   Stateout%gv0(:,levs:1:-1), dz, delp, gsize, dtp, hs, water0, rain0, ice0, snow0, &
                                   graupel0, Model%dycore_hydrostatic, 1, im, 1, levs, q_con(:,levs:1:-1), cappa(:,levs:1:-1), &
